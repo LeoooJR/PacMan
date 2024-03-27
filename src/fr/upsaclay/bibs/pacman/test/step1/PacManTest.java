@@ -56,7 +56,7 @@ public class PacManTest {
         Maze maze = testBoard.getMaze();
         int x = pacman.getX(); // x position at start
         int y = pacman.getY();
-        pacman.nextFrame();
+        pacman.nextMove();
         // PacMan directio is to the left
         assertEquals(pacman.getDirection(), Direction.LEFT);
         // It has moved one pixel to the left
@@ -64,7 +64,7 @@ public class PacManTest {
         assertEquals(pacman.getY(), y);
         // We ask Pacman to go right
         pacman.setIntention(Direction.RIGHT);
-        pacman.nextFrame();
+        pacman.nextMove();
         // PacMan direction should now be right
         assertEquals(pacman.getDirection(), Direction.RIGHT);
         // The intention should be back to null
@@ -73,13 +73,13 @@ public class PacManTest {
         assertEquals(pacman.getX(), x);
         assertEquals(pacman.getY(), y);
         // We move one more time
-        pacman.nextFrame();
+        pacman.nextMove();
         assertEquals(pacman.getDirection(), Direction.RIGHT);
         assertEquals(pacman.getX(), x+1);
         assertEquals(pacman.getY(), y);
         // Now we give the order to go left
         pacman.setIntention(Direction.LEFT);
-        pacman.nextFrame();
+        pacman.nextMove();
         // PacMan direction should now be left
         assertEquals(pacman.getDirection(), Direction.LEFT);
         // The intention should be back to null
@@ -88,7 +88,7 @@ public class PacManTest {
         assertEquals(pacman.getX(), x);
         assertEquals(pacman.getY(), y);
         // We move one more time
-        pacman.nextFrame();
+        pacman.nextMove();
         assertEquals(pacman.getDirection(), Direction.LEFT);
         assertEquals(pacman.getX(), x-1);
         assertEquals(pacman.getY(), y);
@@ -109,7 +109,7 @@ public class PacManTest {
         Maze maze = testBoard.getMaze();
         int x = pacman.getX(); // x position at start
         int y = pacman.getY();
-        pacman.nextFrame();
+        pacman.nextMove();
         // PacMan direction is up
         assertEquals(pacman.getDirection(), Direction.UP);
         // It has moved one pixel up
@@ -117,7 +117,7 @@ public class PacManTest {
         assertEquals(pacman.getY(), y-1);
         // We ask Pacman to go down
         pacman.setIntention(Direction.DOWN);
-        pacman.nextFrame();
+        pacman.nextMove();
         // PacMan direction should now be down
         assertEquals(pacman.getDirection(), Direction.DOWN);
         // The intention should be back to null
@@ -126,13 +126,13 @@ public class PacManTest {
         assertEquals(pacman.getX(), x);
         assertEquals(pacman.getY(), y);
         // We move one more time
-        pacman.nextFrame();
+        pacman.nextMove();
         assertEquals(pacman.getDirection(), Direction.DOWN);
         assertEquals(pacman.getX(), x);
         assertEquals(pacman.getY(), y+1);
         // Now we give the order to go UP
         pacman.setIntention(Direction.UP);
-        pacman.nextFrame();
+        pacman.nextMove();
         // PacMan direction should now be up
         assertEquals(pacman.getDirection(), Direction.UP);
         // The intention should be back to null
@@ -141,7 +141,7 @@ public class PacManTest {
         assertEquals(pacman.getX(), x);
         assertEquals(pacman.getY(), y);
         // We move one more time
-        pacman.nextFrame();
+        pacman.nextMove();
         assertEquals(pacman.getDirection(), Direction.UP);
         assertEquals(pacman.getX(), x);
         assertEquals(pacman.getY(), y-1);
@@ -164,7 +164,7 @@ public class PacManTest {
         Maze maze = testBoard.getMaze();
         int x = pacman.getX(); // x position at start
         int y = pacman.getY();
-        pacman.nextFrame();
+        pacman.nextMove();
         // PacMan direction is to the left
         assertEquals(pacman.getDirection(), Direction.LEFT);
         // It has moved one pixel to the left
@@ -175,7 +175,7 @@ public class PacManTest {
         // Pacman has started at the tile center and has gone one pixel left
         // We move enough so that it reaches the next tile and tries its intention
         for(int i =0; i < 8; i++) {
-            pacman.nextFrame();;
+            pacman.nextMove();;
         }
         // Pacman should have tried to go up, failed and kept going left
         assertEquals(pacman.getDirection(), Direction.LEFT);
@@ -187,7 +187,7 @@ public class PacManTest {
         pacman.setIntention(Direction.DOWN);
         // We move enough so that it reaches the next tile and tries its intention
         for(int i =0; i < 8; i++) {
-            pacman.nextFrame();;
+            pacman.nextMove();;
         }
         // Pacman should have tried to go down, failed and kept going left
         assertEquals(pacman.getDirection(), Direction.LEFT);
@@ -216,7 +216,7 @@ public class PacManTest {
         Maze maze = testBoard.getMaze();
         int x = pacman.getX(); // x position at start
         int y = pacman.getY();
-        pacman.nextFrame();;
+        pacman.nextMove();;
         // PacMan direction is up
         assertEquals(pacman.getDirection(), Direction.UP);
         // It has moved one pixel up
@@ -227,7 +227,7 @@ public class PacManTest {
         // Pacman has started at the tile center and has gone one pixel up
         // We move enough so that it reaches the next tile and tries its intention
         for(int i =0; i < 8; i++) {
-            pacman.nextFrame();;
+            pacman.nextMove();;
         }
         // Pacman should have tried to go left, failed and kept going up
         assertEquals(pacman.getDirection(), Direction.UP);
@@ -239,7 +239,7 @@ public class PacManTest {
         pacman.setIntention(Direction.RIGHT);
         // We move enough so that it reaches the next tile and tries its intention
         for(int i =0; i < 8; i++) {
-            pacman.nextFrame();;
+            pacman.nextMove();;
         }
         // Pacman should have tried to go right, failed and kept going up
         assertEquals(pacman.getDirection(), Direction.UP);
@@ -266,17 +266,17 @@ public class PacManTest {
         Maze maze = testBoard.getMaze();
         int x = pacman.getX(); // x position at start
         int y = pacman.getY();
-        pacman.nextFrame();;
+        pacman.nextMove();;
         // PacMan direction is to the left
         assertEquals(pacman.getDirection(), Direction.LEFT);
         // It has moved one pixel to the left
         assertEquals(pacman.getX(), x-1);
         assertEquals(pacman.getY(), y);
         // We move 4 more pixels to the left to go to the next tile
-        pacman.nextFrame();;
-        pacman.nextFrame();;
-        pacman.nextFrame();;
-        pacman.nextFrame();;
+        pacman.nextMove();;
+        pacman.nextMove();;
+        pacman.nextMove();;
+        pacman.nextMove();;
         // PacMan direction is to the left
         assertEquals(pacman.getDirection(), Direction.LEFT);
         // It has moved 4 pixels to the left
@@ -284,9 +284,9 @@ public class PacManTest {
         assertEquals(pacman.getY(), y);
         // We turn around and go right
         pacman.setIntention(Direction.RIGHT);
-        pacman.nextFrame();
+        pacman.nextMove();
         // PacMan direction is to the Right
-        System.out.println("Right");
+        System.out.println(pacman.getDirection());
         assertEquals(pacman.getDirection(), Direction.RIGHT);
         // It has moved one pixel to the right
         assertEquals(pacman.getX(), x-4);
@@ -295,7 +295,7 @@ public class PacManTest {
         // The intention should be kept until we reach the next tile center
         // (the original x position)
         pacman.setIntention(Direction.UP);
-        pacman.nextFrame();;
+        pacman.nextMove();;
         assertEquals(pacman.getIntention(), Direction.UP);
         // PacMan direction is to the Right
         System.out.println("Right");
@@ -303,7 +303,7 @@ public class PacManTest {
         // It has moved one pixel to the right
         assertEquals(pacman.getX(), x-3);
         assertEquals(pacman.getY(), y);
-        pacman.nextFrame();;
+        pacman.nextMove();;
         assertEquals(pacman.getIntention(), Direction.UP);
         // PacMan direction is to the Right
         System.out.println("Right");
@@ -311,7 +311,7 @@ public class PacManTest {
         // It has moved one pixel to the right
         assertEquals(pacman.getX(), x-2);
         assertEquals(pacman.getY(), y);
-        pacman.nextFrame();;
+        pacman.nextMove();;
         assertEquals(pacman.getIntention(), Direction.UP);
         // PacMan direction is to the Right
         assertEquals(pacman.getDirection(), Direction.RIGHT);
@@ -320,7 +320,7 @@ public class PacManTest {
         assertEquals(pacman.getY(), y);
         // At the next move, pacman reaches the tile center and change its direction
         System.out.println("Centrage !!!");
-        pacman.nextFrame();;
+        pacman.nextMove();;
         // The intention should be empty
         assertNull(pacman.getIntention());
         // PacMan direction is Up
@@ -329,7 +329,7 @@ public class PacManTest {
         assertEquals(pacman.getX(), x);
         assertEquals(pacman.getY(), y);
         // Next move : pacman moves up
-        pacman.nextFrame();;
+        pacman.nextMove();;
         // The intention should be empty
         assertNull(pacman.getIntention());
         // PacMan direction is Up
@@ -356,17 +356,17 @@ public class PacManTest {
         Maze maze = testBoard.getMaze();
         int x = pacman.getX(); // x position at start
         int y = pacman.getY();
-        pacman.nextFrame();;
+        pacman.nextMove();;
         // PacMan direction is to the left
         assertEquals(pacman.getDirection(), Direction.LEFT);
         // It has moved one pixel to the left
         assertEquals(pacman.getX(), x-1);
         assertEquals(pacman.getY(), y);
         // We move 4 more pixels to the left to go to the next tile
-        pacman.nextFrame();;
-        pacman.nextFrame();;
-        pacman.nextFrame();;
-        pacman.nextFrame();;
+        pacman.nextMove();;
+        pacman.nextMove();;
+        pacman.nextMove();;
+        pacman.nextMove();;
         // PacMan direction is to the left
         assertEquals(pacman.getDirection(), Direction.LEFT);
         // It has moved 4 pixels to the left
@@ -374,7 +374,7 @@ public class PacManTest {
         assertEquals(pacman.getY(), y);
         // We turn around and go right
         pacman.setIntention(Direction.RIGHT);
-        pacman.nextFrame();;
+        pacman.nextMove();;
         // PacMan direction is to the Right
         assertEquals(pacman.getDirection(), Direction.RIGHT);
         // It has moved one pixel to the right
@@ -384,21 +384,21 @@ public class PacManTest {
         // The intention should be kept until we reach the next tile center
         // (the original x position)
         pacman.setIntention(Direction.DOWN);
-        pacman.nextFrame();;
+        pacman.nextMove();;
         assertEquals(pacman.getIntention(), Direction.DOWN);
         // PacMan direction is to the Right
         assertEquals(pacman.getDirection(), Direction.RIGHT);
         // It has moved one pixel to the right
         assertEquals(pacman.getX(), x-3);
         assertEquals(pacman.getY(), y);
-        pacman.nextFrame();;
+        pacman.nextMove();;
         assertEquals(pacman.getIntention(), Direction.DOWN);
         // PacMan direction is to the Right
         assertEquals(pacman.getDirection(), Direction.RIGHT);
         // It has moved one pixel to the right
         assertEquals(pacman.getX(), x-2);
         assertEquals(pacman.getY(), y);
-        pacman.nextFrame();;
+        pacman.nextMove();;
         assertEquals(pacman.getIntention(), Direction.DOWN);
         // PacMan direction is to the Right
         assertEquals(pacman.getDirection(), Direction.RIGHT);
@@ -406,7 +406,7 @@ public class PacManTest {
         assertEquals(pacman.getX(), x-1);
         assertEquals(pacman.getY(), y);
         // At the next move, pacman reaches the tile center and change its direction
-        pacman.nextFrame();;
+        pacman.nextMove();;
         // The intention should be empty
         assertNull(pacman.getIntention());
         // PacMan direction is down
@@ -415,7 +415,7 @@ public class PacManTest {
         assertEquals(pacman.getX(), x);
         assertEquals(pacman.getY(), y);
         // Next move : pacman moves down
-        pacman.nextFrame();;
+        pacman.nextMove();;
         // The intention should be empty
         assertNull(pacman.getIntention());
         // PacMan direction is down
@@ -444,17 +444,17 @@ public class PacManTest {
         Maze maze = testBoard.getMaze();
         int x = pacman.getX(); // x position at start
         int y = pacman.getY();
-        pacman.nextFrame();;
+        pacman.nextMove();;
         // PacMan direction is up
         assertEquals(pacman.getDirection(), Direction.UP);
         // It has moved one pixel up
         assertEquals(pacman.getX(), x);
         assertEquals(pacman.getY(), y-1);
         // We move 4 more pixels up to go to the next tile
-        pacman.nextFrame();;
-        pacman.nextFrame();;
-        pacman.nextFrame();;
-        pacman.nextFrame();;
+        pacman.nextMove();;
+        pacman.nextMove();;
+        pacman.nextMove();;
+        pacman.nextMove();;
         // PacMan direction is ip
         assertEquals(pacman.getDirection(), Direction.UP);
         // It has moved 4 pixels up
@@ -462,7 +462,7 @@ public class PacManTest {
         assertEquals(pacman.getY(), y-5);
         // We turn around and go down
         pacman.setIntention(Direction.DOWN);
-        pacman.nextFrame();;
+        pacman.nextMove();;
         // PacMan direction is down
         assertEquals(pacman.getDirection(), Direction.DOWN);
         // It has moved one pixel down
@@ -472,21 +472,21 @@ public class PacManTest {
         // The intention should be kept until we reach the next tile center
         // (the original y position)
         pacman.setIntention(Direction.LEFT);
-        pacman.nextFrame();;
+        pacman.nextMove();;
         assertEquals(pacman.getIntention(), Direction.LEFT);
         // PacMan direction is down
         assertEquals(pacman.getDirection(), Direction.DOWN);
         // It has moved one pixel down
         assertEquals(pacman.getX(), x);
         assertEquals(pacman.getY(), y-3);
-        pacman.nextFrame();;
+        pacman.nextMove();;
         assertEquals(pacman.getIntention(), Direction.LEFT);
         // PacMan direction is down
         assertEquals(pacman.getDirection(), Direction.DOWN);
         // It has moved one pixel down
         assertEquals(pacman.getX(), x);
         assertEquals(pacman.getY(), y-2);
-        pacman.nextFrame();;
+        pacman.nextMove();;
         assertEquals(pacman.getIntention(), Direction.LEFT);
         // PacMan direction is down
         assertEquals(pacman.getDirection(), Direction.DOWN);
@@ -494,7 +494,7 @@ public class PacManTest {
         assertEquals(pacman.getX(), x);
         assertEquals(pacman.getY(), y-1);
         // At the next move, pacman reaches the tile center and change its direction
-        pacman.nextFrame();;
+        pacman.nextMove();;
         // The intention should be empty
         assertNull(pacman.getIntention());
         // PacMan direction is left
@@ -503,7 +503,7 @@ public class PacManTest {
         assertEquals(pacman.getX(), x);
         assertEquals(pacman.getY(), y);
         // Next move : pacman moves left
-        pacman.nextFrame();;
+        pacman.nextMove();;
         // The intention should be empty
         assertNull(pacman.getIntention());
         // PacMan direction is left
@@ -532,7 +532,7 @@ public class PacManTest {
         Maze maze = testBoard.getMaze();
         int x = pacman.getX(); // x position at start
         int y = pacman.getY();
-        pacman.nextFrame();;
+        pacman.nextMove();;
         // PacMan direction is up
         assertEquals(pacman.getDirection(), Direction.UP);
         // It has moved one pixel up
@@ -540,13 +540,13 @@ public class PacManTest {
         assertEquals(pacman.getY(), y-1);
         // We move 4 more pixels up to go to the next tile
         System.out.println("1");
-        pacman.nextFrame();;
+        pacman.nextMove();;
         System.out.println("2");
-        pacman.nextFrame();;
+        pacman.nextMove();;
         System.out.println("3");
-        pacman.nextFrame();;
+        pacman.nextMove();;
         System.out.println("4");
-        pacman.nextFrame();;
+        pacman.nextMove();;
         // PacMan direction is ip
         assertEquals(pacman.getDirection(), Direction.UP);
         // It has moved 4 pixels up
@@ -554,7 +554,7 @@ public class PacManTest {
         assertEquals(pacman.getY(), y-5);
         // We turn around and go down
         pacman.setIntention(Direction.DOWN);
-        pacman.nextFrame();;
+        pacman.nextMove();;
         // PacMan direction is down
         assertEquals(pacman.getDirection(), Direction.DOWN);
         // It has moved one pixel down
@@ -564,21 +564,21 @@ public class PacManTest {
         // The intention should be kept until we reach the next tile center
         // (the original y position)
         pacman.setIntention(Direction.RIGHT);
-        pacman.nextFrame();;
+        pacman.nextMove();;
         assertEquals(pacman.getIntention(), Direction.RIGHT);
         // PacMan direction is down
         assertEquals(pacman.getDirection(), Direction.DOWN);
         // It has moved one pixel down
         assertEquals(pacman.getX(), x);
         assertEquals(pacman.getY(), y-3);
-        pacman.nextFrame();;
+        pacman.nextMove();;
         assertEquals(pacman.getIntention(), Direction.RIGHT);
         // PacMan direction is down
         assertEquals(pacman.getDirection(), Direction.DOWN);
         // It has moved one pixel down
         assertEquals(pacman.getX(), x);
         assertEquals(pacman.getY(), y-2);
-        pacman.nextFrame();;
+        pacman.nextMove();;
         assertEquals(pacman.getIntention(), Direction.RIGHT);
         // PacMan direction is down
         assertEquals(pacman.getDirection(), Direction.DOWN);
@@ -586,7 +586,7 @@ public class PacManTest {
         assertEquals(pacman.getX(), x);
         assertEquals(pacman.getY(), y-1);
         // At the next move, pacman reaches the tile center and change its direction
-        pacman.nextFrame();;
+        pacman.nextMove();;
         // The intention should be empty
         assertNull(pacman.getIntention());
         // PacMan direction is right
@@ -595,7 +595,7 @@ public class PacManTest {
         assertEquals(pacman.getX(), x);
         assertEquals(pacman.getY(), y);
         // Next move : pacman moves right
-        pacman.nextFrame();;
+        pacman.nextMove();;
         // The intention should be empty
         assertNull(pacman.getIntention());
         // PacMan direction is right
@@ -621,7 +621,7 @@ public class PacManTest {
         int y = pacman.getY();
         // We move 4 tiles to the left
         for(int i = 0; i < 4*Maze.TILE_WIDTH; i ++) {
-            pacman.nextFrame();;
+            pacman.nextMove();;
         }
         assertEquals(pacman.getX(), x - 4*Maze.TILE_WIDTH);
         assertEquals(pacman.getY(), y);
@@ -630,14 +630,14 @@ public class PacManTest {
         x = pacman.getX();
         assertEquals(x, 3);
         // We should still be able to move left
-        pacman.nextFrame();;
+        pacman.nextMove();;
         assertEquals(pacman.getX(), 2);
-        pacman.nextFrame();;
+        pacman.nextMove();;
         assertEquals(pacman.getX(), 1);
-        pacman.nextFrame();;
+        pacman.nextMove();;
         assertEquals(pacman.getX(), 0);
         // When we move one more pixel to the left, we go to the right end of the board
-        pacman.nextFrame();;
+        pacman.nextMove();;
         assertEquals(pacman.getX(), maze.getPixelWidth() - 1);
         // the tile is the last tile of the line
         assertEquals(pacman.getCurrentTile().getCol(), maze.getWidth() - 1);
@@ -660,7 +660,7 @@ public class PacManTest {
         int y = pacman.getY();
         // We move 4 tiles to the left
         for(int i = 0; i < 4*Maze.TILE_WIDTH; i ++) {
-            pacman.nextFrame();;
+            pacman.nextMove();;
         }
         assertEquals(pacman.getX(), x + 4*Maze.TILE_WIDTH);
         assertEquals(pacman.getY(), y);
@@ -669,16 +669,16 @@ public class PacManTest {
         x = pacman.getX();
         assertEquals(x, maze.getPixelWidth() - 5);
         // We should still be able to move right
-        pacman.nextFrame();;
+        pacman.nextMove();;
         assertEquals(pacman.getX(), maze.getPixelWidth() - 4);
-        pacman.nextFrame();;
+        pacman.nextMove();;
         assertEquals(pacman.getX(), maze.getPixelWidth() - 3);
-        pacman.nextFrame();;
+        pacman.nextMove();;
         assertEquals(pacman.getX(), maze.getPixelWidth() - 2);
-        pacman.nextFrame();;
+        pacman.nextMove();;
         assertEquals(pacman.getX(), maze.getPixelWidth() - 1);
         // When we move one more pixel to the right, we go to the left end of the board
-        pacman.nextFrame();;
+        pacman.nextMove();;
         assertEquals(pacman.getX(), 0);
         // the tile is the last tile of the line
         assertEquals(pacman.getCurrentTile().getCol(), 0);
@@ -696,59 +696,59 @@ public class PacManTest {
         Maze maze = testBoard.getMaze();
         // we move 6 tiles up
         for(int i =0; i < Maze.TILE_HEIGHT * 6; i++) {
-            pacman.nextFrame();;
+            pacman.nextMove();;
         }
         int x = pacman.getX();
         int y = pacman.getY();
         //assertFalse(pacman.isBlocked()); // not blocked yet -> Blocked at the center in this implementation
         // On the next move, we are stuck because of the wall
-        pacman.nextFrame();;
+        pacman.nextMove();;
         assertEquals(pacman.getX(), x);
         assertEquals(pacman.getY(), y);
         assertTrue(pacman.isBlocked());
         // still stuck
-        pacman.nextFrame();;
+        pacman.nextMove();;
         assertEquals(pacman.getX(), x);
         assertEquals(pacman.getY(), y);
         assertTrue(pacman.isBlocked());
         // We ask pacman to go up, and it's still stuck
         pacman.setIntention(Direction.UP);
-        pacman.nextFrame();;
+        pacman.nextMove();;
         assertEquals(pacman.getX(), x);
         assertEquals(pacman.getY(), y);
         assertTrue(pacman.isBlocked());
         // Now let's ask him to go down and unstuck
         pacman.setIntention(Direction.DOWN);
-        pacman.nextFrame();;
+        pacman.nextMove();;
         assertEquals(pacman.getX(), x);
         assertEquals(pacman.getY(), y+1);
         assertFalse(pacman.isBlocked());
         // Let's ask him to go up again
         pacman.setIntention(Direction.UP);
-        pacman.nextFrame();;
+        pacman.nextMove();;
         assertEquals(pacman.getX(), x);
         assertEquals(pacman.getY(), y);
         // Now we're again stuck
-        pacman.nextFrame();;
+        pacman.nextMove();;
         assertEquals(pacman.getX(), x);
         assertEquals(pacman.getY(), y);
         assertTrue(pacman.isBlocked());
         // Let's ask him to go left -- that should unstuck him
         pacman.setIntention(Direction.LEFT);
-        pacman.nextFrame();;
+        pacman.nextMove();;
         assertEquals(pacman.getX(), x-1);
         assertEquals(pacman.getY(), y);
         assertFalse(pacman.isBlocked());
         // Now let's move to the left wall and get stuck again
         for(int i = 0; i < Maze.TILE_WIDTH; i++) {
-            pacman.nextFrame();;
+            pacman.nextMove();;
         }
         assertEquals(pacman.getX(), x-8);
         assertEquals(pacman.getY(), y);
         assertTrue(pacman.isBlocked());
         // If we tell pacman to g right, it gets unstuck
         pacman.setIntention(Direction.RIGHT);
-        pacman.nextFrame();;
+        pacman.nextMove();;
         assertEquals(pacman.getX(), x-7);
         assertEquals(pacman.getY(), y);
         assertFalse(pacman.isBlocked());

@@ -11,6 +11,8 @@ public class Blinky extends AbstractGhost{
         setPosition(112,115);
         setDirection(Direction.LEFT);
         setSpeed(.94);
+        setStopTime(0);
+        setIntention(this.computeDirection());
     }
 
     @Override

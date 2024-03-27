@@ -22,6 +22,7 @@ public class PacMan extends AbstractActor{
             setPosition(35,75);
         }
         setSpeed(1);
+        setStopTime(0);
     }
 
     @Override
@@ -38,6 +39,7 @@ public class PacMan extends AbstractActor{
                 goThisWay(previousDirection);
                 return false;
             }
+            setIntention(null);
         }
         else {
             if(isBlocked()){
@@ -49,10 +51,13 @@ public class PacMan extends AbstractActor{
 
     @Override
     public void nextMove(){
+        System.out.println("PacMan Move");
         if(getIntention() == getDirection().reverse()) {
+            System.out.println("reverse");
             goThisWay(getIntention());
+            setIntention(null);
         }
-        if(isCentered() ? tryThisWay() : true){
+        if((isCentered() ? tryThisWay() : true)){
             super.nextMove();
         }
         if(isCentered()){

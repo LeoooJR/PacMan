@@ -326,8 +326,10 @@ public class BoardTest {
         // At some point, Blinky should reach PacMan and the game is over
         while(!pacman.getCurrentTile().equals(blinky.getCurrentTile())) {
             board.nextFrame();
+            System.out.println("PacMan X " + pacman.getRealX() + " Y " +pacman.getRealY());
         }
         // They are on the same time, the game should be over
         assertEquals(board.getBoardState(), BoardState.LIFE_OVER);
     }
+
 }

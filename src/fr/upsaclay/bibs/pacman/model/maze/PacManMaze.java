@@ -2,9 +2,13 @@ package fr.upsaclay.bibs.pacman.model.maze;
 
 import fr.upsaclay.bibs.pacman.model.Direction;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.lang.Math;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class PacManMaze implements Maze{
 
@@ -137,7 +141,7 @@ public class PacManMaze implements Maze{
                 else if(pos.getLine() + dir.getDy() >= height){
                     return maze[0][pos.getCol()];
                 }
-                else return maze[pos.getLine() + dir.getDy()][pos.getCol()];
+                else {return maze[pos.getLine() + dir.getDy()][pos.getCol()];}
             case Direction.RIGHT, Direction.LEFT:
                 if(pos.getCol() + dir.getDx() < 0){
                     return maze[pos.getLine()][width-1];
@@ -145,7 +149,7 @@ public class PacManMaze implements Maze{
                 else if(pos.getCol() + dir.getDx() >= width){
                     return maze[pos.getLine()][0];
                 }
-                else return maze[pos.getLine()][pos.getCol() + dir.getDx()];
+                else {return maze[pos.getLine()][pos.getCol() + dir.getDx()];}
             default: return maze[pos.getLine()][pos.getCol()];
         }
     }
@@ -185,7 +189,10 @@ public class PacManMaze implements Maze{
 
     public static void main(String[] args) throws FileNotFoundException {
         Maze test = Maze.emptyMaze(10,15);
-        Maze test2 = Maze.loadFromFile("/Users/leojourdain/Documents/Java/Projet/Projet_Pacman/resources/test.txt");
-        System.out.println(test.getNumberOfDots());
+        List<Color> colors = new ArrayList<>();
+        colors.add(Color.BLACK); colors.addLast(Color.BLUE); colors.addLast(Color.pink);
+        Color[][] test2 = Maze.loadFromFile("/Users/leojourdain/Documents/Java/Projet/Projet_Pacman/resources/tiles/BD.txt",colors);
+        System.out.println(Arrays.deepToString(test2));
+
     }
 }

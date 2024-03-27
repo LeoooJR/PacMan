@@ -13,7 +13,7 @@ public class PacManApp {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             try {
-                Controller controller = Controller.getController(InterfaceMode.VISUAL);
+                Controller controller = Controller.getController(InterfaceMode.SIMPLE);
                 controller.setGameType(GameType.CLASSIC);
                 controller.initialize();
             } catch (PacManException e) {

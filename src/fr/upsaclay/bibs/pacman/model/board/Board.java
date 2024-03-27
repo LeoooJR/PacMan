@@ -83,6 +83,8 @@ public interface Board {
      */
     BoardState getBoardState();
 
+    void setBoardState(BoardState state);
+
     /**
      * Return the ghost of a given type
      * If the board does not contain such a ghost, it returns null

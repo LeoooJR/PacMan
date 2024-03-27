@@ -80,6 +80,7 @@ public class BlinkyTest {
         // We move a bit
         for(int i = 0; i < 20; i++) {
             board.nextFrame();
+            System.out.println(blinky.getIntention());
         }
         // Pacman position has changed and the target should have also changed
         pacmacPos = board.getMaze().getTilePosition(pacman.getX(), pacman.getY());

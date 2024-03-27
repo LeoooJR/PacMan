@@ -2,7 +2,9 @@ package fr.upsaclay.bibs.pacman.view;
 
 import fr.upsaclay.bibs.pacman.control.Controller;
 import fr.upsaclay.bibs.pacman.control.GameAction;
+import fr.upsaclay.bibs.pacman.model.actors.Actor;
 import fr.upsaclay.bibs.pacman.model.board.Board;
+import fr.upsaclay.bibs.pacman.model.maze.Maze;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -13,6 +15,12 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class PacManGameView extends JFrame implements PacManView {
+
+    public static final int PIXELS_PER_CELLS = 24;
+
+    public static final int WIDTH = 720;
+
+    public static  final int HEIGHT = 1000;
 
     private Controller controller;
 
@@ -61,7 +69,6 @@ public class PacManGameView extends JFrame implements PacManView {
     public void initialize() {
         //Initiation Panel
         initPanel.setBackground(Color.BLACK);
-        add(initPanel,BorderLayout.CENTER);
 
         //Header
         JLabel header = new JLabel();
@@ -96,6 +103,12 @@ public class PacManGameView extends JFrame implements PacManView {
 
         //Game Panel
         gamePanel = new GamePanel();
+        gamePanel.setBackground(Color.BLACK);
+        JLabel gameHeader = new JLabel();
+        gameHeader.setText("HIGH SCORE");
+        gameHeader.setFont(new Font("Futura",Font.BOLD,33));
+        gameHeader.setForeground(Color.WHITE);
+        gamePanel.add(gameHeader,BorderLayout.NORTH);
 
         //Timer
         timer.addActionListener(new ButtonListener(controller, GameAction.NEXT_FRAME));
@@ -121,6 +134,7 @@ public class PacManGameView extends JFrame implements PacManView {
         switch (layout){
             case PacManLayout.INIT:
                 this.layout = PacManLayout.INIT;
+                add(initPanel,BorderLayout.CENTER);
                 initPanel.setVisible(true);
                 gamePanel.setVisible(false);
                 pausePanel.setVisible(false);
@@ -130,6 +144,7 @@ public class PacManGameView extends JFrame implements PacManView {
                 break;
             case GAME_ON:
                 this.layout = PacManLayout.GAME_ON;
+                add(gamePanel,BorderLayout.CENTER);
                 initPanel.setVisible(false);
                 gamePanel.setVisible(true);
                 pausePanel.setVisible(false);
@@ -154,6 +169,15 @@ public class PacManGameView extends JFrame implements PacManView {
     public PacManLayout getViewLayout(){
         return this.layout;
     }
+
+
+    public void setMaze(Maze maze){
+        gamePanel.setMaze(maze);
+    }
+
+    public void setPacMan(Actor agent){gamePanel.setPacman(agent);}
+
+    public void setBlinky(Actor agent){gamePanel.setBlinky(agent);}
 
     @Override
     public void update() {

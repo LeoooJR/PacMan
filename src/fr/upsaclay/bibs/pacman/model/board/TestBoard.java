@@ -26,7 +26,7 @@ public class TestBoard extends AbstractBoard{
         }
         //Load PacMan
         setPacman(new PacMan(this));
-        startActors();
+        //startActors();
     }
 
     public static void main(String[] args) throws PacManException {

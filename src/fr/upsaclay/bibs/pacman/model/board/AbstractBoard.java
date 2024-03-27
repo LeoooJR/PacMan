@@ -10,6 +10,7 @@ import fr.upsaclay.bibs.pacman.model.maze.Tile;
 import fr.upsaclay.bibs.pacman.model.maze.TilePosition;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AbstractBoard implements Board{
@@ -21,6 +22,8 @@ public class AbstractBoard implements Board{
     private Maze maze;
 
     private PacMan pacman;
+
+    private List<Ghost> ghosts = new ArrayList<>();
 
     private int score = 0;
 
@@ -41,7 +44,6 @@ public class AbstractBoard implements Board{
     @Override
     public void startActors() {
         pacman.start();
-        gameState = BoardState.STARTED;
     }
 
     @Override
@@ -66,17 +68,32 @@ public class AbstractBoard implements Board{
         switch(maze.getTile(pacman.getCurrentTile())){
             case SD, ND:
                 score += 10;
-                pacman.reseatStopTime();
-                maze.setTile(pacman.getCurrentTile(), Tile.EE);
+                pacman.setStopTime(1);
+                maze.setTile(pacman.getCurrentTile(), getMaze().getTile(pacman.getCurrentTile()) == Tile.ND ? Tile.NT : Tile.EE);
                 break;
             case BD:
                 score += 50;
-                pacman.reseatStopTime();
+                pacman.setStopTime(3);
                 maze.setTile(pacman.getCurrentTile(), Tile.EE);
                 break;
         }
         if(maze.getNumberOfDots() == 0){
             gameState = BoardState.LEVEL_OVER;
+        }
+        for(Ghost ghost: ghosts){
+            ghost.nextFrame();
+            if(ghost.getCurrentTile().equals(pacman.getCurrentTile())){
+                gameState = BoardState.LIFE_OVER;
+            }
+            switch (maze.getTile(ghost.getCurrentTile())){
+                case SL:
+                    ghost.setSpeed(.5);
+                    break;
+                default:
+                    if(ghost.getSpeed() == 0.5){
+                        ghost.setSpeed(1);
+                    }
+            }
         }
     }
 
@@ -93,13 +110,22 @@ public class AbstractBoard implements Board{
     }
 
     @Override
+    public void setBoardState(BoardState state) {
+        this.gameState = state;
+    }
+
+    public void setGhosts(List<Ghost> ghostList){
+        this.ghosts = ghostList;
+    }
+
+    @Override
     public Ghost getGhost(GhostType ghostType) {
-        return null;
+        return ghosts.isEmpty() ? null : ghosts.get(ghostType.ordinal());
     }
 
     @Override
     public List<Ghost> getGhosts() {
-        return null;
+        return ghosts;
     }
 
     //Step 3
@@ -131,7 +157,7 @@ public class AbstractBoard implements Board{
 
     @Override
     public boolean hasGhost(GhostType ghostType) {
-        return false;
+        return !ghosts.isEmpty() ? ghosts.get(ghostType.ordinal()).getGhostType() == ghostType : false;
     }
 
     @Override

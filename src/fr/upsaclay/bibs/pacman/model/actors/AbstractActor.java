@@ -63,7 +63,7 @@ public class AbstractActor implements Actor{
 
     @Override
     public void start() {
-
+        intention = null;
     }
 
     @Override
@@ -78,6 +78,7 @@ public class AbstractActor implements Actor{
 
     @Override
     public void setIntention(Direction direction) {
+        this.intention = direction;
     }
 
     @Override
@@ -125,32 +126,28 @@ public class AbstractActor implements Actor{
     public boolean tryThisWay(Direction direction, TilePosition tile){
         Direction previousDirection = getDirection();
         goThisWay(direction);
-        if(isBlocked(tile)){
-            System.out.println("Bloqué");
-            goThisWay(previousDirection);
-            return false;
-        }
-        return true;
+        boolean wayBool = !isBlocked(tile);
+        goThisWay(previousDirection);
+        return wayBool;
     }
     public void goThisWay(Direction intention){
-        setDirection(intention);
-        this.intention = null;
+        direction = intention;
     }
     @Override
     public void nextMove() {
-        if(x + (direction.getDx())*movementSpeed >= board.getMaze().getPixelWidth())
-            setPosition(0,(y + direction.getDy())*movementSpeed);
-        else if(x + (direction.getDx())*movementSpeed < 0){
-            setPosition(board.getMaze().getPixelWidth()-1,(y + direction.getDy())*movementSpeed);
+        if(x + (direction.getDx()*movementSpeed) >= board.getMaze().getPixelWidth())
+            setPosition(0,(y + (direction.getDy()*movementSpeed)));
+        else if(x + (direction.getDx()*movementSpeed) < 0){
+            setPosition(board.getMaze().getPixelWidth()-1,(y + (direction.getDy()*movementSpeed)));
         }
-        else if((y + direction.getDy())*movementSpeed >= board.getMaze().getPixelHeight()){
-            setPosition(x + (direction.getDx())*movementSpeed, 0);
+        else if((y + (direction.getDy()*movementSpeed)) >= board.getMaze().getPixelHeight()){
+            setPosition(x + (direction.getDx()*movementSpeed), 0);
         }
-        else if((y + direction.getDy())*movementSpeed < 0){
-            setPosition(x + (direction.getDx())*movementSpeed, board.getMaze().getPixelHeight() - 1);
+        else if((y + (direction.getDy()*movementSpeed)) < 0){
+            setPosition(x + (direction.getDx()*movementSpeed), board.getMaze().getPixelHeight() - 1);
         }
         else {
-            setPosition(x + (direction.getDx())*movementSpeed, (y + direction.getDy())*movementSpeed);
+            setPosition(x + (direction.getDx()*movementSpeed), (y + (direction.getDy()*movementSpeed)));
         }
         System.out.println("X " + x + " Y " + y);
         System.out.println(getCurrentTile());

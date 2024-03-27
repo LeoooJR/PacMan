@@ -18,7 +18,6 @@ public class AbstractGhost extends AbstractActor implements Ghost{
     public AbstractGhost(Board board,GhostType type){
         super(ActorType.GHOST, board);
         ghostType = type;
-
     }
     @Override
     public GhostType getGhostType() {
@@ -32,26 +31,41 @@ public class AbstractGhost extends AbstractActor implements Ghost{
 
     public Direction computeDirection(){
         double[] distArray = new double[4];
-        int minId = 0; double min = Integer.MAX_VALUE;
+        double min = Double.MAX_VALUE;
+        int minId = -1; double x; double y;
+        TilePosition nextTile = (getBoard().getMaze().getNeighbourTilePosition(getCurrentTile(), getDirection()));
         for(Direction dir: Direction.values()){
             if(dir != getDirection().reverse()){
-                TilePosition nextTile = (getBoard().getMaze().getNeighbourTilePosition(getCurrentTile(), getDirection()));
                 if(tryThisWay(dir,nextTile)){
-                    distArray[dir.ordinal()] = Math.sqrt(((nextTile.getCol() - getTarget().getCol())*(nextTile.getCol() - getTarget().getCol())) + ((nextTile.getLine() - getTarget().getLine())*(nextTile.getLine() - getTarget().getLine())));
+                    System.out.println("Direction testée : " + dir);
+                    /**x = ((getBoard().getMaze().getNeighbourTilePosition(nextTile,dir).getCol() * getBoard().getMaze().TILE_WIDTH) + getBoard().getMaze().TITLE_CENTER_X) - ((getTarget().getCol() * getBoard().getMaze().TILE_WIDTH) + getBoard().getMaze().TITLE_CENTER_X);
+                    y = ((getBoard().getMaze().getNeighbourTilePosition(nextTile,dir).getLine() * getBoard().getMaze().TILE_HEIGHT) + getBoard().getMaze().TITLE_CENTER_Y) - ((getTarget().getLine() * getBoard().getMaze().TILE_HEIGHT) + getBoard().getMaze().TITLE_CENTER_Y);
+                    distArray[dir.ordinal()] = Math.sqrt((x*x)+(y*y));**/
+                    x = getBoard().getMaze().getNeighbourTilePosition(nextTile,dir).getCol() - getTarget().getCol();
+                    System.out.println("X : " + x);
+                    y = getBoard().getMaze().getNeighbourTilePosition(nextTile,dir).getLine() - getTarget().getLine();
+                    System.out.println("Y : " + y);
+                    distArray[dir.ordinal()] = Math.sqrt((x*x)+(y*y));
                     if(distArray[dir.ordinal()] < min){
                         minId = dir.ordinal();
+                        min = distArray[dir.ordinal()];
                     }
                 }
             }
         }
-        return Direction.values()[minId];
+        System.out.println(Arrays.toString(distArray));
+        return minId >= 0 ? Direction.values()[minId] : null;
     }
     @Override
     public void nextMove() {
+        System.out.println("Blinky Move");
         if(isCentered()){
+            System.out.println("Blinky est centré");
             goThisWay(getIntention());
-            computeDirection();
+            setIntention(computeDirection());
+            System.out.println("Blinky intention :" + getIntention());
         }
+        super.nextMove();
     }
 
     //Step 3

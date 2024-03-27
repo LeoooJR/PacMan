@@ -783,6 +783,7 @@ public class PacManTest {
         testBoard.startActors();
         int x = pacman.getX();
         int y = pacman.getY();
+        System.out.println(pacman.getSpeed());
         pacman.nextMove();
         // AS we reduce x by .5, the int is reduced by 1
         assertEquals(pacman.getX(), x - 1);

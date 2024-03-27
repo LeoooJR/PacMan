@@ -3,9 +3,11 @@ package fr.upsaclay.bibs.pacman.model.maze;
 
 import fr.upsaclay.bibs.pacman.model.Direction;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -180,6 +182,27 @@ public interface Maze {
             }
             System.out.println(Arrays.deepToString(maze));
             return new PacManMaze(maze,width,height);
+        } catch (FileNotFoundException e){
+            throw new FileNotFoundException("Error in file path");
+        }
+    }
+
+    static Color[][] loadFromFile(String file, List<Color> color) throws FileNotFoundException{
+        try{
+            String rawLineData; String[] rowData; Color[][] colorData =  new Color[TILE_HEIGHT][TILE_WIDTH];
+            int colPtr; int rowPtr = 0;
+            File fileTarget = new File(file);
+            Scanner scanner = new Scanner(fileTarget);
+            while(scanner.hasNextLine()){
+                rawLineData = scanner.nextLine();
+                rowData = rawLineData.split(" ");
+                colPtr = 0;
+                for(String code: rowData){
+                    colorData[rowPtr][colPtr++] = color.get(Integer.parseInt(code));
+                }
+                rowPtr++;
+            }
+            return colorData;
         } catch (FileNotFoundException e){
             throw new FileNotFoundException("Error in file path");
         }
