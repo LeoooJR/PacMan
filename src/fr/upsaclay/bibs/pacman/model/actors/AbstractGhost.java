@@ -13,7 +13,11 @@ public class AbstractGhost extends AbstractActor implements Ghost{
 
     private GhostType ghostType;
 
+    private GhostState ghostState;
+
     private TilePosition target;
+
+    private GhostPenState penState;
 
     public AbstractGhost(Board board,GhostType type){
         super(ActorType.GHOST, board);
@@ -26,7 +30,20 @@ public class AbstractGhost extends AbstractActor implements Ghost{
 
     @Override
     public TilePosition getTarget() {
-        return null;
+        return target;
+    }
+
+    @Override
+    public boolean isBlocked(TilePosition tile) {
+        if (penState == GhostPenState.IN){
+            if(getBoard().getMaze().getNeighbourTile(tile,getDirection()) == Tile.GD){
+                return false;
+            }
+        }
+        else {
+             return super.isBlocked(tile);
+        }
+        return false;
     }
 
     public Direction computeDirection(){
@@ -66,33 +83,39 @@ public class AbstractGhost extends AbstractActor implements Ghost{
             System.out.println("Blinky intention :" + getIntention());
         }
         super.nextMove();
+        if(penState == GhostPenState.IN){
+            if(getCurrentTile().getLine() <= 14 && getCurrentTile().getCol() >= 13){
+                penState = GhostPenState.OUT;
+                ghostState = GhostState.SCATTER;
+            }
+        }
     }
 
     //Step 3
 
     @Override
     public void setGhostState(GhostState state) {
-
+        ghostState = state;
     }
 
     @Override
     public void changeGhostState(GhostState state) {
-
+        reverseDirectionIntention();
     }
 
     @Override
     public GhostState getGhostState() {
-        return null;
+        return ghostState;
     }
 
     @Override
     public void setGhostPenState(GhostPenState state) {
-
+        penState = state;
     }
 
     @Override
     public GhostPenState getGhostPenState() {
-        return null;
+        return penState;
     }
 
     @Override
@@ -107,7 +130,7 @@ public class AbstractGhost extends AbstractActor implements Ghost{
 
     @Override
     public void reverseDirectionIntention() {
-
+        setIntention(getDirection().reverse());
     }
 
     @Override

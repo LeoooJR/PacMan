@@ -3,6 +3,7 @@ package fr.upsaclay.bibs.pacman.view;
 import fr.upsaclay.bibs.pacman.control.Controller;
 import fr.upsaclay.bibs.pacman.control.GameAction;
 import fr.upsaclay.bibs.pacman.model.actors.Actor;
+import fr.upsaclay.bibs.pacman.model.actors.Ghost;
 import fr.upsaclay.bibs.pacman.model.board.Board;
 import fr.upsaclay.bibs.pacman.model.maze.Maze;
 
@@ -33,11 +34,19 @@ public class PacManGameView extends JFrame implements PacManView {
 
     GamePanel gamePanel;
 
+    JPanel gameHeaderPanel;
+
     PlayKeyListener playListener;
 
     JPanel pausePanel;
 
+    JPanel levelOverPanel;
+
+    JPanel lifeOverPanel;
+
     Timer timer;
+
+    JLabel score;
 
     public PacManGameView(String name, int width, int height){
         super(name);
@@ -73,15 +82,18 @@ public class PacManGameView extends JFrame implements PacManView {
         //Header
         JLabel header = new JLabel();
         header.setText("TOUCH TO START");
-        header.setFont(new Font("Futura",Font.BOLD,33));
-        header.setForeground(Color.YELLOW);
+        header.setHorizontalAlignment(SwingConstants.CENTER);
+        header.setFont(new Font("Futura",Font.BOLD,50));
+        header.setForeground(Color.ORANGE);
         initPanel.add(header, BorderLayout.CENTER);
 
+
         //Image Label GIF
-        ImageIcon imgGif = new ImageIcon(Objects.requireNonNull(this.getClass().getResource("giphy.gif")));
+        ImageIcon imgGif = new ImageIcon(Objects.requireNonNull(this.getClass().getResource("giphy720.gif")));
         JLabel imgLabel = new JLabel();
-        imgLabel.setBounds(1000,600,720,280);
+        imgLabel.setBounds(0,600,1000,280);
         imgLabel.setIcon(imgGif);
+        imgLabel.setHorizontalAlignment(SwingConstants.CENTER);
         initPanel.add(imgLabel,BorderLayout.SOUTH);
 
         //Header Image PacMan
@@ -104,11 +116,28 @@ public class PacManGameView extends JFrame implements PacManView {
         //Game Panel
         gamePanel = new GamePanel();
         gamePanel.setBackground(Color.BLACK);
+
+        //Header Game Panel
+        gameHeaderPanel = new JPanel();
+        gameHeaderPanel.setLayout(new BoxLayout(gameHeaderPanel,BoxLayout.Y_AXIS));
+        gameHeaderPanel.setBackground(Color.BLACK);
+        gameHeaderPanel.setPreferredSize(new Dimension(720,95));
+
         JLabel gameHeader = new JLabel();
         gameHeader.setText("HIGH SCORE");
         gameHeader.setFont(new Font("Futura",Font.BOLD,33));
         gameHeader.setForeground(Color.WHITE);
-        gamePanel.add(gameHeader,BorderLayout.NORTH);
+        gameHeader.setAlignmentX(Component.CENTER_ALIGNMENT);
+        gameHeaderPanel.add(gameHeader);
+
+        gamePanel.add(gameHeaderPanel,BorderLayout.NORTH);
+
+        score = new JLabel();
+        score.setText("0");
+        score.setFont(new Font("Futura",Font.BOLD,33));
+        score.setForeground(Color.WHITE);
+        score.setBackground(Color.BLACK);
+        score.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         //Timer
         timer.addActionListener(new ButtonListener(controller, GameAction.NEXT_FRAME));
@@ -122,6 +151,24 @@ public class PacManGameView extends JFrame implements PacManView {
         textLabel.setText("Pause");
         pausePanel.add(textLabel);
 
+        //Level Over Panel
+        levelOverPanel = new JPanel();
+        levelOverPanel.setBackground(Color.BLACK);
+
+        JLabel winLevelMessage = new JLabel();
+        winLevelMessage.setText("You win this level !");
+        winLevelMessage.setFont(new Font("Futura",Font.BOLD,33));
+        levelOverPanel.add(winLevelMessage,BorderLayout.CENTER);
+
+
+        //Life Over Panel
+        lifeOverPanel = new JPanel();
+        lifeOverPanel.setBackground(Color.BLACK);
+
+        JLabel looseLevelMessage = new JLabel();
+        looseLevelMessage.setText("You loose !");
+        looseLevelMessage.setFont(new Font("Futura",Font.BOLD,33));
+        lifeOverPanel.add(looseLevelMessage);
 
         setLocationRelativeTo(null);
         setVisible(true);
@@ -138,24 +185,26 @@ public class PacManGameView extends JFrame implements PacManView {
                 initPanel.setVisible(true);
                 gamePanel.setVisible(false);
                 pausePanel.setVisible(false);
-                addKeyListener(startListener);
                 removeKeyListener(playListener);
+                addKeyListener(startListener);
                 requestFocus();
                 break;
             case GAME_ON:
                 this.layout = PacManLayout.GAME_ON;
                 add(gamePanel,BorderLayout.CENTER);
                 initPanel.setVisible(false);
+                lifeOverPanel.setVisible(false);
+                levelOverPanel.setVisible(false);
                 gamePanel.setVisible(true);
                 pausePanel.setVisible(false);
-                addKeyListener(playListener);
                 removeKeyListener(startListener);
+                addKeyListener(playListener);
+                gameHeaderPanel.add(score);
                 requestFocus();
                 timer.start();
                 break;
             case PAUSE:
                 this.layout = PacManLayout.PAUSE;
-                initPanel.setVisible(false);
                 gamePanel.setVisible(false);
                 pausePanel.setVisible(true);
                 removeKeyListener(playListener);
@@ -163,6 +212,25 @@ public class PacManGameView extends JFrame implements PacManView {
                 requestFocus();
                 timer.stop();
                 break;
+            case LEVEL_OVER:
+                this.layout = PacManLayout.LEVEL_OVER;
+                add(levelOverPanel,BorderLayout.CENTER);
+                gamePanel.setVisible(false);
+                levelOverPanel.setVisible(true);
+                removeKeyListener(playListener);
+                timer.stop();
+                addKeyListener(startListener);
+                requestFocus();
+                break;
+            case LIFE_OVER:
+                this.layout = PacManLayout.LIFE_OVER;
+                add(lifeOverPanel,BorderLayout.CENTER);
+                gamePanel.setVisible(false);
+                lifeOverPanel.setVisible(true);
+                removeKeyListener(playListener);
+                timer.stop();
+                addKeyListener(startListener);
+                requestFocus();
         }
     }
 
@@ -177,11 +245,12 @@ public class PacManGameView extends JFrame implements PacManView {
 
     public void setPacMan(Actor agent){gamePanel.setPacman(agent);}
 
-    public void setBlinky(Actor agent){gamePanel.setBlinky(agent);}
+    public void setGhosts(java.util.List<Ghost> ghosts){gamePanel.setGhostList(ghosts);}
 
     @Override
     public void update() {
         repaint();
+        score.setText(String.valueOf(board.getScore()));
         requestFocus();
     }
 

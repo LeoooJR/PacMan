@@ -12,17 +12,11 @@ public class PacMan extends AbstractActor{
 
     private final int stopTimePacMan = 1;
 
+    private int lifePoint = 3;
+
     public PacMan(Board board){
         super(ActorType.PACMAN, board);
-        setDirection(Direction.LEFT);
-        if(getBoard().getGameType() == GameType.CLASSIC) {
-            setPosition(112,211);
-        }
-        else {
-            setPosition(35,75);
-        }
-        setSpeed(1);
-        setStopTime(0);
+        initializePacMan();
     }
 
     @Override
@@ -73,5 +67,21 @@ public class PacMan extends AbstractActor{
 
     public void reseatStopTime(){
         super.setStopTime(stopTimePacMan);
+    }
+
+    public int getLifePoint() {
+        return lifePoint;
+    }
+
+    public void initializePacMan(){
+        if(getBoard().getGameType() == GameType.CLASSIC) {
+            setPosition(112,211);
+        }
+        else {
+            setPosition(35,75);
+        }
+        setDirection(Direction.LEFT);
+        setSpeed(1);
+        setStopTime(0);
     }
 }

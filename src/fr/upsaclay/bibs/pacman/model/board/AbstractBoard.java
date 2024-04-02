@@ -19,17 +19,34 @@ public class AbstractBoard implements Board{
 
     private BoardState gameState;
 
+    private boolean isPlaying;
+
     private Maze maze;
 
     private PacMan pacman;
 
-    private List<Ghost> ghosts = new ArrayList<>();
+    private List<Ghost> ghosts;
+
+    private GhostState ghostState;
+
+    private int[] scatterTime;
+
+    private int[] chaseTime;
+
+    private int scatterCtr;
+
+    private int chaseCtr;
+
+    private boolean disable;
 
     private int score = 0;
+
+    private int level;
 
     AbstractBoard(GameType game){
         this.game = game;
         this.gameState = BoardState.INITIAL;
+        this.isPlaying = false;
     }
     @Override
     public GameType getGameType() {
@@ -38,7 +55,31 @@ public class AbstractBoard implements Board{
 
     @Override
     public void initialize() throws PacManException {
-        throw new UnsupportedOperationException("Ooops something went wrong!");
+        if(!isPlaying){
+            level = 1;
+            score = 0;
+            scatterTime = new int[]{7*60, 7*60, 5*60, 5*60};
+            chaseTime = new int[]{20*60, 20*60, 20*60, -1};
+            //Load PacMan
+            setPacman(new PacMan(this));
+            ghosts = new ArrayList<>();
+            //Blinky
+            ghosts.add(new Blinky(this));
+            //Add last Pinky
+            ghosts.addLast(new Pinky(this));
+            //Add last Inky
+            ghosts.addLast(new Inky(this));
+            //Add last Clyde
+            ghosts.addLast(new Clyde(this));
+            //startActors();
+            isPlaying = true;
+        }
+        else {
+            initializeNewLife();
+        }
+        scatterCtr = 0;
+        chaseCtr = 0;
+        ghostState = GhostState.SCATTER;
     }
 
     @Override
@@ -64,6 +105,7 @@ public class AbstractBoard implements Board{
 
     @Override
     public void nextFrame() {
+        //PacMan turn
         pacman.nextFrame();
         switch(maze.getTile(pacman.getCurrentTile())){
             case SD, ND:
@@ -80,10 +122,18 @@ public class AbstractBoard implements Board{
         if(maze.getNumberOfDots() == 0){
             gameState = BoardState.LEVEL_OVER;
         }
+        //Ghost turn
         for(Ghost ghost: ghosts){
+            if(ghostState != ghost.getGhostState()){
+                ghost.setGhostState(ghostState);
+                ghost.reverseDirectionIntention();
+            }
             ghost.nextFrame();
             if(ghost.getCurrentTile().equals(pacman.getCurrentTile())){
-                gameState = BoardState.LIFE_OVER;
+                if(pacman.getLifePoint() > 0){
+                    gameState = BoardState.LIFE_OVER;
+                }else gameState = BoardState.GAME_OVER;
+
             }
             switch (maze.getTile(ghost.getCurrentTile())){
                 case SL:
@@ -93,6 +143,27 @@ public class AbstractBoard implements Board{
                     if(ghost.getSpeed() == 0.5){
                         ghost.setSpeed(1);
                     }
+            }
+        }
+        if(!disable){
+            if(chaseTime[chaseCtr] != -1){
+                switch (ghostState){
+                    case SCATTER:
+                        scatterTime[scatterCtr]--;
+                        if(scatterTime[scatterCtr] == 0){
+                            ghostState = GhostState.CHASE;
+                            scatterCtr++;
+                        }
+                        break;
+                    case CHASE:
+                        chaseTime[chaseCtr]--;
+                        if(chaseTime[chaseCtr] == 0){
+                            if(scatterCtr < 3){
+                                ghostState = GhostState.SCATTER;
+                            }
+                            chaseCtr++;
+                        }
+                }
             }
         }
     }
@@ -132,26 +203,44 @@ public class AbstractBoard implements Board{
 
     @Override
     public int getLevel() {
-        return 0;
+        return level;
     }
 
     @Override
     public void initializeNewLevel(int level) throws PacManException {
-
+        this.level = level;
+        this.scatterCtr = 0;
+        switch (level){
+            case 2,3,4:
+                scatterTime = new int[]{7 * 60, 7 * 60, 5 * 60, 1};
+                chaseTime = new int[]{20 * 60, 20 * 60, 1033 * 60, -1};
+                break;
+            default:
+                scatterTime = new int[]{5 * 60, 5 * 60, 5 * 60, 1};
+                chaseTime = new int[]{20 * 60, 20 * 60, 1037 * 60, -1};
+                break;
+        }
     }
 
     @Override
     public void setNumberOfLives(int nbLives) {
-
     }
 
     @Override
     public int getNumberOfLives() {
-        return 0;
+        return pacman.getLifePoint();
     }
 
     @Override
     public void initializeNewLife() {
+        pacman.initializePacMan();
+        //initialize Ghosts
+        ghosts.clear();
+        //Blinky
+        ghosts.add(new Blinky(this));
+        //Add last Pinky
+        //Add last Inky
+        //Add last Clyde
 
     }
 
@@ -167,7 +256,7 @@ public class AbstractBoard implements Board{
 
     @Override
     public void disableStateTime() {
-
+        disable = true;
     }
 
     @Override

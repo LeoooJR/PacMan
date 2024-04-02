@@ -59,7 +59,7 @@ public class SimpleController implements Controller{
                     view.setBoard(board);
                     view.setMaze(board.getMaze());
                     view.setPacMan(board.getPacMan());
-                    view.setBlinky(board.getGhost(GhostType.BLINKY));
+                    view.setGhosts(board.getGhosts());
                 }
                 else {
                     throw new ForbiddenActionException(action);
@@ -86,12 +86,18 @@ public class SimpleController implements Controller{
                 board.nextFrame();
                 switch (board.getBoardState()){
                     case LEVEL_OVER:
+                        view.setLayout(PacManLayout.LEVEL_OVER);
                     case LIFE_OVER:
+                        view.setLayout(PacManLayout.LIFE_OVER);
                 }}
                 else {
                     throw new ForbiddenActionException(action);
                 }
                 break;
+            case NEW_GAME:
+                view.setLayout(PacManLayout.INIT);
+            case NEXT_LEVEL:
+                view.setLayout(PacManLayout.INIT);
         }
         view.update();
     }

@@ -1,6 +1,7 @@
 package fr.upsaclay.bibs.pacman.view;
 
 import fr.upsaclay.bibs.pacman.model.actors.Actor;
+import fr.upsaclay.bibs.pacman.model.actors.Ghost;
 import fr.upsaclay.bibs.pacman.model.actors.GhostType;
 import fr.upsaclay.bibs.pacman.model.maze.Maze;
 import fr.upsaclay.bibs.pacman.model.maze.PacManMaze;
@@ -18,7 +19,7 @@ public class GamePanel extends JPanel {
 
     private Actor pacman;
 
-    private Actor blinky;
+    private List<Ghost> ghostList;
 
     public GamePanel(){
         super();
@@ -28,7 +29,7 @@ public class GamePanel extends JPanel {
         this.pacman = agent;
     }
 
-    public void setBlinky(Actor agent) {this.blinky = agent;}
+    public void setGhostList(List<Ghost> ghosts){this.ghostList = ghosts; }
 
     public void setMaze(Maze maze){
         this.maze = maze;
@@ -49,7 +50,12 @@ public class GamePanel extends JPanel {
             }
         }
         if(tile.isWall()){
-            graphics.setColor(Color.BLUE);
+            if(tile == Tile.GD){
+                graphics.setColor(Color.PINK);
+            }
+            else{
+                graphics.setColor(Color.BLUE);
+            }
         }
         else {
             graphics.setColor(Color.BLACK);
@@ -57,11 +63,23 @@ public class GamePanel extends JPanel {
         graphics.fillRect(offset_x + (j * PacManGameView.PIXELS_PER_CELLS), offset_y + (i * PacManGameView.PIXELS_PER_CELLS), PacManGameView.PIXELS_PER_CELLS, PacManGameView.PIXELS_PER_CELLS);
     }
 
-    public void paintGhost(Graphics graphics, GhostType type, int offset_x, int offset_y){
-        switch (type){
-            case BLINKY:
-                graphics.setColor(Color.RED);
-                graphics.fillRect((offset_x + (blinky.getCurrentTile().getCol() * Maze.TILE_WIDTH)*3),offset_y + ((blinky.getCurrentTile().getLine() * Maze.TILE_HEIGHT)*3),PacManGameView.PIXELS_PER_CELLS, PacManGameView.PIXELS_PER_CELLS);
+    public void paintGhost(Graphics graphics, int offset_x, int offset_y){
+        for(Ghost ghost: ghostList){
+            switch (ghost.getGhostType()){
+                case BLINKY:
+                    graphics.setColor(Color.RED);
+                    break;
+                case PINKY:
+                    graphics.setColor(Color.PINK);
+                    break;
+                case INKY:
+                    graphics.setColor(Color.BLUE);
+                    break;
+                case CLYDE:
+                    graphics.setColor(Color.ORANGE);
+                    break;
+            }
+            graphics.fillRect((offset_x + (ghost.getCurrentTile().getCol() * Maze.TILE_WIDTH)*3),offset_y + ((ghost.getCurrentTile().getLine() * Maze.TILE_HEIGHT)*3),PacManGameView.PIXELS_PER_CELLS, PacManGameView.PIXELS_PER_CELLS);
         }
     }
 
@@ -82,7 +100,7 @@ public class GamePanel extends JPanel {
                 }
             }
             paintPacMan(graphics, offset_x, offset_y);
-            paintGhost(graphics,GhostType.BLINKY,offset_x,offset_y);
+            paintGhost(graphics, offset_x, offset_y);
         }
     }
 }

@@ -26,16 +26,12 @@ public class ClassicBoard extends AbstractBoard{
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
-        //Load PacMan
-        setPacman(new PacMan(this));
-        //Load Ghosts
-        List<Ghost> ghostList = new ArrayList<>();
-        //Blinky
-        ghostList.add(new Blinky(this));
-        setGhosts(ghostList);
-        //Add last Pinky
-        //Add last Inky
-        //Add last Clyde
-        //startActors();
+        super.initialize();
+    }
+
+    @Override
+    public void initializeNewLevel(int level) throws PacManException {
+        initialize();
+        super.initializeNewLevel(getLevel() + 1);
     }
 }
