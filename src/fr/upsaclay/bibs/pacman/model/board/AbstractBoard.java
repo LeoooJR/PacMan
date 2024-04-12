@@ -12,6 +12,7 @@ import fr.upsaclay.bibs.pacman.model.maze.TilePosition;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class AbstractBoard implements Board{
 
@@ -29,6 +30,8 @@ public class AbstractBoard implements Board{
 
     private GhostState ghostState;
 
+    private GhostState ghostPreviousState;
+
     private int[] scatterTime;
 
     private int[] chaseTime;
@@ -36,6 +39,10 @@ public class AbstractBoard implements Board{
     private int scatterCtr;
 
     private int chaseCtr;
+
+    private int[] frightTime;
+
+    private int frightTimer;
 
     private boolean disable;
 
@@ -60,6 +67,7 @@ public class AbstractBoard implements Board{
             score = 0;
             scatterTime = new int[]{7*60, 7*60, 5*60, 5*60};
             chaseTime = new int[]{20*60, 20*60, 20*60, -1};
+            frightTime = new int[]{6,5,4,3,2,5,2,2,1,5,2,1,1,3,1,1,-1,1,-1,-1,-1};
             //Load PacMan
             setPacman(new PacMan(this));
             ghosts = new ArrayList<>();
@@ -117,6 +125,9 @@ public class AbstractBoard implements Board{
                 score += 50;
                 pacman.setStopTime(3);
                 maze.setTile(pacman.getCurrentTile(), Tile.EE);
+                this.ghostPreviousState = ghostState;
+                ghostState = GhostState.FRIGHTENED;
+                this.frightTimer = frightTime[level-1];
                 break;
         }
         if(maze.getNumberOfDots() == 0){
@@ -145,7 +156,7 @@ public class AbstractBoard implements Board{
                     }
             }
         }
-        if(!disable){
+        if(!disable && ghostState != GhostState.FRIGHTENED){
             if(chaseTime[chaseCtr] != -1){
                 switch (ghostState){
                     case SCATTER:
@@ -164,6 +175,12 @@ public class AbstractBoard implements Board{
                             chaseCtr++;
                         }
                 }
+            }
+        }
+        else {
+            frightTimer--;
+            if(frightTimer == 0){
+                ghostState = ghostPreviousState;
             }
         }
     }

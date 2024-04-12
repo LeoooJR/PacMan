@@ -79,7 +79,27 @@ public class AbstractGhost extends AbstractActor implements Ghost{
         if(isCentered()){
             System.out.println("Blinky est centré");
             goThisWay(getIntention());
-            setIntention(computeDirection());
+            if(getGhostState() != GhostState.FRIGHTENED){
+                setIntention(computeDirection());
+            }
+            else{
+                int resRandom = (int)(Math.random() * (3 + 1));
+                System.out.println("Resultat random : " + resRandom);
+                if(tryThisWay(Direction.values()[resRandom],getCurrentTile())){
+                    setIntention(Direction.values()[resRandom]);
+                }
+                else{
+                    boolean randWay = false;
+                    for(Direction direction: Direction.values()){
+                        if(direction != Direction.values()[resRandom] && !randWay){
+                            if(tryThisWay(direction,getCurrentTile())){
+                                setIntention(direction);
+                                randWay = true;
+                            }
+                        }
+                    }
+                }
+            }
             System.out.println("Blinky intention :" + getIntention());
         }
         super.nextMove();

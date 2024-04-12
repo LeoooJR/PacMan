@@ -15,15 +15,20 @@ public class Clyde extends AbstractGhost{
 
     @Override
     public TilePosition getTarget(){
-        if(getGhostState() == GhostState.CHASE){
-            double distanceCol = getBoard().getPacMan().getCurrentTile().getCol() - getCurrentTile().getCol();
-            double distanceRow = getBoard().getPacMan().getCurrentTile().getLine() - getCurrentTile().getLine();
-            double distanceFromPacMan = Math.sqrt((distanceRow*distanceRow)+(distanceCol*distanceCol));
-            if(distanceFromPacMan >= 8.0){
-                return getBoard().getPacMan().getCurrentTile();
-            }
+        if(getGhostPenState() == GhostPenState.IN){
+            return new TilePosition(14,14);
         }
-        return scatterTilePosition;
+        else{
+            if(getGhostState() == GhostState.CHASE){
+                double distanceCol = getBoard().getPacMan().getCurrentTile().getCol() - getCurrentTile().getCol();
+                double distanceRow = getBoard().getPacMan().getCurrentTile().getLine() - getCurrentTile().getLine();
+                double distanceFromPacMan = Math.sqrt((distanceRow*distanceRow)+(distanceCol*distanceCol));
+                if(distanceFromPacMan >= 8.0){
+                    return getBoard().getPacMan().getCurrentTile();
+                }
+            }
+            return scatterTilePosition;
+        }
     }
 
     public void initializeClyde(){
@@ -32,6 +37,6 @@ public class Clyde extends AbstractGhost{
         setSpeed(.94);
         setStopTime(0);
         setIntention(this.computeDirection());
-        setGhostState(GhostState.SCATTER);
+        setGhostPenState(GhostPenState.IN);
     }
 }
