@@ -94,6 +94,7 @@ public class SimpleControllerTest {
     @Test
     public void testGameActions() throws PacManException {
         Controller simple = Controller.getController(InterfaceMode.SIMPLE);
+//        todo: set the game type confusing here
         simple.setGameType(GameType.TEST);
         simple.initialize(); // in my implementation, initizalize calls initializeNewGame by default
         simple.receiveAction(GameAction.START);

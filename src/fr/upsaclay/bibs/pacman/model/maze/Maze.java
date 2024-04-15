@@ -146,7 +146,7 @@ public interface Maze {
                 maze[col][row] = Tile.EE;
             }
         }
-        System.out.println(Arrays.deepToString(maze));
+//        System.out.println(Arrays.deepToString(maze));
         return new PacManMaze(maze,width,height);
     }
 
@@ -166,8 +166,8 @@ public interface Maze {
                 rowData = rawLineData.split(" ");
                 if(mazeData){
                     mazeData = false;
-                    System.out.println(rawLineData);
-                    System.out.println(Arrays.toString(rowData));
+//                    System.out.println(rawLineData);
+//                    System.out.println(Arrays.toString(rowData));
                     width = Integer.parseInt(rowData[0]);
                     height = Integer.parseInt(rowData[1]);
                     maze = new Tile[height][width];
@@ -180,7 +180,7 @@ public interface Maze {
                     rowPtr++;
                 }
             }
-            System.out.println(Arrays.deepToString(maze));
+//            System.out.println(Arrays.deepToString(maze));
             return new PacManMaze(maze,width,height);
         } catch (FileNotFoundException e){
             throw new FileNotFoundException("Error in file path");

@@ -15,7 +15,10 @@ public class Inky extends AbstractGhost{
 
     @Override
     public TilePosition getTarget(){
-        if(getGhostPenState() == GhostPenState.IN){
+        if(getGhostState() == GhostState.FRIGHTENED || getGhostState() == GhostState.FRIGHTENED_END){
+            return null;
+        }
+        else if(getGhostPenState() == GhostPenState.IN){
             return new TilePosition(14,14);
         }
         else{
@@ -34,7 +37,8 @@ public class Inky extends AbstractGhost{
                         tileOffset = new TilePosition(rowPacMan + 2, colPacMan);
                         break;
                     case UP:
-                        tileOffset = new TilePosition(rowPacMan - 2, colPacMan);
+                         // Special case for the up direction
+                        tileOffset = new TilePosition(rowPacMan - 2, colPacMan - 2);
                         break;
                 }
                 int dX; int dY;

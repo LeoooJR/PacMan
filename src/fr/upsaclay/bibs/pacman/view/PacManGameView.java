@@ -99,7 +99,7 @@ public class PacManGameView extends JFrame implements PacManView {
         //Header Image PacMan
         BufferedImage imgPacMan;
         try {
-            imgPacMan = ImageIO.read(new File("/Users/leojourdain/Documents/Java/Projet/Projet_Pacman/src/fr/upsaclay/bibs/pacman/view/Pac-Man_Logo.svg.png"));
+            imgPacMan = ImageIO.read(new File("src/fr/upsaclay/bibs/pacman/view/Pac-Man_Logo.svg.png"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

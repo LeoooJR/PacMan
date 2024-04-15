@@ -18,8 +18,8 @@ public class TestBoard extends AbstractBoard{
     public void initialize() throws PacManException{
         //Load the maze
         try {
-            setMaze(Maze.loadFromFile("/Users/leojourdain/Documents/Java/Projet/Projet_Pacman/resources/test.txt"));
-            System.out.println("Initialisation");
+            setMaze(Maze.loadFromFile("resources/test.txt"));
+//            System.out.println("Initialisation");
         }
         catch(FileNotFoundException e){
             throw new RuntimeException(e);
@@ -32,6 +32,6 @@ public class TestBoard extends AbstractBoard{
     public static void main(String[] args) throws PacManException {
         Board test = Board.createBoard(GameType.TEST);
         test.initialize();
-        System.out.println(test.getPacMan().getCurrentTile());
+//        System.out.println(test.getPacMan().getCurrentTile());
     }
 }

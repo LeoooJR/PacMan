@@ -286,7 +286,7 @@ public class PacManTest {
         pacman.setIntention(Direction.RIGHT);
         pacman.nextMove();
         // PacMan direction is to the Right
-        System.out.println(pacman.getDirection());
+//        System.out.println(pacman.getDirection());
         assertEquals(pacman.getDirection(), Direction.RIGHT);
         // It has moved one pixel to the right
         assertEquals(pacman.getX(), x-4);
@@ -298,7 +298,7 @@ public class PacManTest {
         pacman.nextMove();;
         assertEquals(pacman.getIntention(), Direction.UP);
         // PacMan direction is to the Right
-        System.out.println("Right");
+//        System.out.println("Right");
         assertEquals(pacman.getDirection(), Direction.RIGHT);
         // It has moved one pixel to the right
         assertEquals(pacman.getX(), x-3);
@@ -306,7 +306,7 @@ public class PacManTest {
         pacman.nextMove();;
         assertEquals(pacman.getIntention(), Direction.UP);
         // PacMan direction is to the Right
-        System.out.println("Right");
+//        System.out.println("Right");
         assertEquals(pacman.getDirection(), Direction.RIGHT);
         // It has moved one pixel to the right
         assertEquals(pacman.getX(), x-2);
@@ -319,7 +319,7 @@ public class PacManTest {
         assertEquals(pacman.getX(), x-1);
         assertEquals(pacman.getY(), y);
         // At the next move, pacman reaches the tile center and change its direction
-        System.out.println("Centrage !!!");
+//        System.out.println("Centrage !!!");
         pacman.nextMove();;
         // The intention should be empty
         assertNull(pacman.getIntention());
@@ -539,13 +539,13 @@ public class PacManTest {
         assertEquals(pacman.getX(), x);
         assertEquals(pacman.getY(), y-1);
         // We move 4 more pixels up to go to the next tile
-        System.out.println("1");
+//        System.out.println("1");
         pacman.nextMove();;
-        System.out.println("2");
+//        System.out.println("2");
         pacman.nextMove();;
-        System.out.println("3");
+//        System.out.println("3");
         pacman.nextMove();;
-        System.out.println("4");
+//        System.out.println("4");
         pacman.nextMove();;
         // PacMan direction is ip
         assertEquals(pacman.getDirection(), Direction.UP);
@@ -689,7 +689,7 @@ public class PacManTest {
         Board testBoard = Board.createBoard(GameType.TEST);
         testBoard.initialize();
         Actor pacman = testBoard.getPacMan();
-        System.out.println(pacman.getCurrentTile());
+//        System.out.println(pacman.getCurrentTile());
         pacman.setDirection(Direction.UP); // We set the direction up before starting the actor
         testBoard.startActors();
         assertFalse(pacman.isBlocked());

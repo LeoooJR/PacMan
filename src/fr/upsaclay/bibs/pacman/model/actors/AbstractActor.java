@@ -149,8 +149,8 @@ public class AbstractActor implements Actor{
         else {
             setPosition(x + (direction.getDx()*movementSpeed), (y + (direction.getDy()*movementSpeed)));
         }
-        System.out.println("X " + x + " Y " + y);
-        System.out.println(getCurrentTile());
+//        System.out.println("X " + x + " Y " + y);
+//        System.out.println(getCurrentTile());
     }
 
     @Override

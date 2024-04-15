@@ -29,7 +29,7 @@ public class PacMan extends AbstractActor{
             Direction previousDirection = getDirection();
             goThisWay(getIntention());
             if(isBlocked()){
-                System.out.println("Bloqué");
+//                System.out.println("Bloqué");
                 goThisWay(previousDirection);
                 return false;
             }
@@ -45,9 +45,9 @@ public class PacMan extends AbstractActor{
 
     @Override
     public void nextMove(){
-        System.out.println("PacMan Move");
+//        System.out.println("PacMan Move");
         if(getIntention() == getDirection().reverse()) {
-            System.out.println("reverse");
+//            System.out.println("reverse");
             goThisWay(getIntention());
             setIntention(null);
         }

@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 public class InkyTest {
 
     @Test
@@ -42,7 +43,7 @@ public class InkyTest {
         Board board = Board.createBoard(GameType.CLASSIC);
         board.initialize();
         Actor inky = board.getGhost(GhostType.INKY);
-        inky.setPosition(3,3);
+        inky.setPosition(3, 3);
         assertEquals(inky.getX(), 3);
         assertEquals(inky.getY(), 3);
     }
@@ -52,12 +53,12 @@ public class InkyTest {
         Board board = Board.createBoard(GameType.CLASSIC);
         board.initialize();
         Actor inky = board.getGhost(GhostType.INKY);
-        inky.setPosition(3,3);
+        inky.setPosition(3, 3);
         assertEquals(inky.getX(), 3);
         assertEquals(inky.getY(), 3);
-        assertEquals(inky.getCurrentTile(), new TilePosition(0,0));
-        inky.setPosition(120,115);
-        assertEquals(inky.getCurrentTile(), new TilePosition(14,15));
+        assertEquals(inky.getCurrentTile(), new TilePosition(0, 0));
+        inky.setPosition(120, 115);
+        assertEquals(inky.getCurrentTile(), new TilePosition(14, 15));
     }
 
     @Test
@@ -69,6 +70,8 @@ public class InkyTest {
         assertEquals(inky.getGhostType(), GhostType.INKY);
         assertEquals(inky.getX(), 96);
         assertEquals(inky.getY(), 139);
+        GhostState state = inky.getGhostState();
+        GhostPenState penState = inky.getGhostPenState();
         assertEquals(inky.getGhostState(), GhostState.SCATTER);
         assertEquals(inky.getGhostPenState(), GhostPenState.IN);
     }
@@ -101,28 +104,46 @@ public class InkyTest {
         assertEquals(inky.getTarget(), new TilePosition(34, 27));
     }
 
-    @Test void testInkyChaseTarget() throws PacManException {
+    @Test
+    void testInkyChaseTarget() throws PacManException {
         Board board = Board.createBoard(GameType.CLASSIC);
         board.disableStateTime();
         board.initialize();
         Ghost inky = board.getGhost(GhostType.INKY);
+
         Configurations.setGhostOut(inky);
         inky.setGhostState(GhostState.CHASE);
+
         board.startActors();
         Actor pacman = board.getPacMan();
         Actor blinky = board.getGhost(GhostType.BLINKY);
+        GhostState state = inky.getGhostState();
         TilePosition pos = board.getMaze().getTilePosition(pacman.getX(), pacman.getY());
         TilePosition bpos = board.getMaze().getTilePosition(blinky.getX(), blinky.getY());
+//        System.out.println("Ghost state is " + inky.getGhostState());
         // Pacman is in 26 14 moving left
         // Blinky is in 14 14
         // Inky should be line = 26 + (26 -14) = 38, col = 12 + (12 - 14) = 10
         assertEquals(inky.getTarget(), new TilePosition(38, 10));
         // When pacman and blinky move, inky's target moves also
-        for(int i = 0; i < 8; i++) {
+        for (int i = 0; i < 8; i++) {
+//            System.out.println("Ghost state is " + inky.getGhostState());
             board.nextFrame();
+//            inky.setGhostState(GhostState.CHASE);
+//            System.out.println("Pacman is in " + board.getMaze().getTilePosition(pacman.getX(), pacman.getY()) + " moving " + pacman.getDirection());
+//            System.out.println("Blinky is in " + board.getMaze().getTilePosition(blinky.getX(), blinky.getY()));
+//            System.out.println("Inky is in " + board.getMaze().getTilePosition(inky.getX(), inky.getY()) + " moving " + inky.getDirection());
+//            System.out.println("Inky target is " + inky.getTarget());
+//            System.out.println("Inky intention is " + inky.getIntention());
+//            System.out.println("====================================");
+//            System.out.println("Ghost state is " + inky.getGhostState());
+
         }
         // Pacman is in 26 13 moving left
         // Blinky is in 14 13
+//        Inky is in 14 13
+        GhostState state3 = inky.getGhostState();
+        TilePosition tar = inky.getTarget();
         // Inky should be line = 26 + (26 -14) = 38, col = 11 + (11 - 13) = 9
         assertEquals(inky.getTarget(), new TilePosition(38, 9));
         // If Pacman changes direction, inky's target changes
@@ -134,6 +155,8 @@ public class InkyTest {
         assertEquals(inky.getTarget(), new TilePosition(42, 13));
         // Special case for up direction
         pacman.setDirection(Direction.UP);
+        System.out.println("Pacman is in " + board.getMaze().getTilePosition(pacman.getX(), pacman.getY()) + " moving " + pacman.getDirection());
+        System.out.println("Inky is in " + board.getMaze().getTilePosition(inky.getX(), inky.getY()) + " moving " + inky.getDirection());
         // Inky should be line = 24 + (24 - 14) = 34, col = 11 + (11 - 13) = 9
         assertEquals(inky.getTarget(), new TilePosition(34, 9));
     }
@@ -144,7 +167,7 @@ public class InkyTest {
         board.initialize();
         Ghost inky = board.getGhost(GhostType.INKY);
         // We put Inky outsite the pen
-        inky.setPosition(112,115);
+        inky.setPosition(112, 115);
         inky.setGhostPenState(GhostPenState.OUT);
         inky.setDirection(Direction.LEFT);
         board.startActors();
@@ -183,20 +206,31 @@ public class InkyTest {
 
     @Test
     public void testChangeStateScatterFrightenOut() throws PacManException {
+        // TODO : Somethingweird is happeneing here
         Board board = Board.createBoard(GameType.CLASSIC);
         board.initialize();
         Ghost inky = board.getGhost(GhostType.INKY);
+
         Configurations.setGhostOut(inky);
         board.startActors();
         inky.changeGhostState(GhostState.FRIGHTENED);
         assertEquals(inky.getGhostState(), GhostState.FRIGHTENED);
         assertEquals(inky.getIntention(), Direction.RIGHT);
+        Direction dir = inky.getIntention();
+        System.out.println("Direction after before while loop is " + dir);
         while (inky.getDirection() == Direction.LEFT) {
             board.nextFrame();
+            System.out.println("Direction after before while loop is " + dir);
         }
+        dir = inky.getIntention();
+        System.out.println("Direction after while loop is " + dir);
+        GhostState currentState = inky.getGhostState();
+        System.out.println("Current state is " + currentState);
         assertEquals(inky.getDirection(), Direction.RIGHT);
         inky.changeGhostState(GhostState.FRIGHTENED_END);
         assertEquals(inky.getGhostState(), GhostState.FRIGHTENED_END);
+       dir = inky.getIntention();
+        System.out.println(STR."Direction is \{dir}");
         assertEquals(inky.getIntention(), Direction.RIGHT); // No turning around
         inky.changeGhostState(GhostState.SCATTER);
         assertEquals(inky.getGhostState(), GhostState.SCATTER);
@@ -205,6 +239,7 @@ public class InkyTest {
 
     @Test
     public void testChangeStateChaseFrightenOut() throws PacManException {
+        // TODO : This passes sometimes and sometimes fails
         Board board = Board.createBoard(GameType.CLASSIC);
         board.disableStateTime();
         board.initialize();
@@ -429,7 +464,7 @@ public class InkyTest {
         Configurations.setGhostOut(inky);
         board.startActors();
         // We move a bit
-        for (int i = 0; i < 8; i ++) {
+        for (int i = 0; i < 8; i++) {
             board.nextFrame();
         }
         inky.setGhostState(GhostState.FRIGHTENED);
@@ -447,7 +482,7 @@ public class InkyTest {
         Configurations.setGhostOut(inky);
         board.startActors();
         // We move a bit
-        for (int i = 0; i < 8; i ++) {
+        for (int i = 0; i < 8; i++) {
             board.nextFrame();
         }
         inky.setGhostState(GhostState.FRIGHTENED_END);
@@ -458,6 +493,7 @@ public class InkyTest {
 
     /**
      * We test that Inky actually leaves the ghost pen at the beginning of the game
+     *
      * @throws PacManException
      */
     @Test
@@ -484,8 +520,10 @@ public class InkyTest {
         assertEquals(inky.getDirection(), inky.getOutOfPenDirection());
     }
 
-    /** We test that when inky is set to dead, it actually goes to the
+    /**
+     * We test that when inky is set to dead, it actually goes to the
      * ghost pen and gets realive and out
+     *
      * @throws PacManException
      */
     @Test
@@ -500,7 +538,7 @@ public class InkyTest {
         inky.setGhostState(GhostState.SCATTER);
         board.startActors();
         // Let's move a bit
-        for(int i =0; i <50; i++) {
+        for (int i = 0; i < 50; i++) {
             board.nextFrame();
         }
         // Now we change inky to dead
@@ -527,7 +565,7 @@ public class InkyTest {
         // Inky should be realive
         assertEquals(inky.getGhostState(), GhostState.SCATTER);
         // We increase inky's dot counter
-        while (! inky.getDotCounter().hasReachedLimit()) {
+        while (!inky.getDotCounter().hasReachedLimit()) {
             inky.getDotCounter().inc();
         }
         board.nextFrame();
@@ -544,6 +582,7 @@ public class InkyTest {
     /**
      * We test that the out of pen direction is actually used
      * when getting out of pen
+     *
      * @throws PacManException
      */
     @Test
@@ -594,10 +633,10 @@ public class InkyTest {
         Configurations.blockGhosts(maze);
         Configurations.setGhostOut(board.getGhost(GhostType.INKY));
         // We remove all dots except one
-        for(int i =0; i < maze.getHeight(); i++) {
-            for(int j=0; j < maze.getWidth(); j++) {
-                if(maze.getTile(i,j).hasDot() && (i != 26 || j != 12)) {
-                    maze.setTile(i,j,maze.getTile(i,j).clearDot());
+        for (int i = 0; i < maze.getHeight(); i++) {
+            for (int j = 0; j < maze.getWidth(); j++) {
+                if (maze.getTile(i, j).hasDot() && (i != 26 || j != 12)) {
+                    maze.setTile(i, j, maze.getTile(i, j).clearDot());
                 }
             }
         }
@@ -635,9 +674,9 @@ public class InkyTest {
         Ghost inky = board.getGhost(GhostType.INKY);
         inky.setGhostState(GhostState.SCATTER);
         // We change the NT just left outside of the pen into an SL
-        maze.setTile(14,12, Tile.SL);
+        maze.setTile(14, 12, Tile.SL);
         board.startActors();
-        TilePosition nt = new TilePosition(14,12);
+        TilePosition nt = new TilePosition(14, 12);
         while (inky.getGhostPenState() != GhostPenState.OUT) {
             board.nextFrame();
         }
@@ -660,9 +699,9 @@ public class InkyTest {
         Ghost inky = board.getGhost(GhostType.INKY);
         inky.setGhostState(GhostState.SCATTER);
         // We change the NT just left outside of the pen into an SL
-        maze.setTile(14,12, Tile.SL);
+        maze.setTile(14, 12, Tile.SL);
         board.startActors();
-        TilePosition nt = new TilePosition(14,12);
+        TilePosition nt = new TilePosition(14, 12);
         while (inky.getGhostPenState() != GhostPenState.OUT) {
             board.nextFrame();
         }
@@ -690,25 +729,25 @@ public class InkyTest {
             board.nextFrame();
         }
         // inky changes direction, it should be at the center of the tile
-        assertEquals(inky.getX()%Maze.TILE_WIDTH, Maze.TITLE_CENTER_X);
-        assertEquals(inky.getY()%Maze.TILE_HEIGHT, Maze.TITLE_CENTER_Y);
+        assertEquals(inky.getX() % Maze.TILE_WIDTH, Maze.TITLE_CENTER_X);
+        assertEquals(inky.getY() % Maze.TILE_HEIGHT, Maze.TITLE_CENTER_Y);
         while (inky.getDirection() == Direction.DOWN) {
             board.nextFrame();
         }
         // inky changes direction, it should be at the center of the tile
-        assertEquals(inky.getX()%Maze.TILE_WIDTH, Maze.TITLE_CENTER_X);
-        assertEquals(inky.getY()%Maze.TILE_HEIGHT, Maze.TITLE_CENTER_Y);
+        assertEquals(inky.getX() % Maze.TILE_WIDTH, Maze.TITLE_CENTER_X);
+        assertEquals(inky.getY() % Maze.TILE_HEIGHT, Maze.TITLE_CENTER_Y);
         while (inky.getDirection() == Direction.RIGHT) {
             board.nextFrame();
         }
         // inky changes direction, it should be at the center of the tile
-        assertEquals(inky.getX()%Maze.TILE_WIDTH, Maze.TITLE_CENTER_X);
-        assertEquals(inky.getY()%Maze.TILE_HEIGHT, Maze.TITLE_CENTER_Y);
+        assertEquals(inky.getX() % Maze.TILE_WIDTH, Maze.TITLE_CENTER_X);
+        assertEquals(inky.getY() % Maze.TILE_HEIGHT, Maze.TITLE_CENTER_Y);
         while (inky.getDirection() == Direction.UP) {
             board.nextFrame();
         }
         // inky changes direction, it should be at the center of the tile
-        assertEquals(inky.getX()%Maze.TILE_WIDTH, Maze.TITLE_CENTER_X);
-        assertEquals(inky.getY()%Maze.TILE_HEIGHT, Maze.TITLE_CENTER_Y);
+        assertEquals(inky.getX() % Maze.TILE_WIDTH, Maze.TITLE_CENTER_X);
+        assertEquals(inky.getY() % Maze.TILE_HEIGHT, Maze.TITLE_CENTER_Y);
     }
 }

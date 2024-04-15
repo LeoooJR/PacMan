@@ -19,6 +19,7 @@ public class SimpleController implements Controller{
     public void initialize() throws PacManException {
         view = new PacManGameView("PacMan",720,1000);
         view.setController(this);
+//        board
         //view.setBoard(board);
         view.initialize();
         view.setLayout(PacManLayout.INIT);
@@ -44,7 +45,7 @@ public class SimpleController implements Controller{
         switch(action){
             case RIGHT, LEFT, UP, DOWN:
                 if(view.getViewLayout() == PacManLayout.GAME_ON){
-                    System.out.println("Event : " + Direction.valueOf(String.valueOf(action)));
+//                    System.out.println("Event : " + Direction.valueOf(String.valueOf(action)));
                     board.getPacMan().setIntention(Direction.valueOf(String.valueOf(action)));
                 }
                 else {

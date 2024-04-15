@@ -40,7 +40,7 @@ public class GamePanel extends JPanel {
         colors.add(Color.BLACK); colors.addLast(Color.BLUE); colors.addLast(Color.pink);
         Color[][] tileColor;
         try {
-            tileColor = Maze.loadFromFile("/Users/leojourdain/Documents/Java/Projet/Projet_Pacman/resources/tiles/" + tile.toString() + ".txt",colors);
+            tileColor = Maze.loadFromFile(STR."resources/tiles/\{tile.toString()}.txt",colors);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }

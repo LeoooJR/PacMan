@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class AbstractBoard implements Board{
+public class AbstractBoard implements Board {
 
     private final GameType game;
 
@@ -28,6 +28,7 @@ public class AbstractBoard implements Board{
 
     private List<Ghost> ghosts;
 
+    private List<GhostType> disabledGhosts;
     private GhostState ghostState;
 
     private GhostState ghostPreviousState;
@@ -50,11 +51,15 @@ public class AbstractBoard implements Board{
 
     private int level;
 
-    AbstractBoard(GameType game){
+
+
+    AbstractBoard(GameType game) {
         this.game = game;
         this.gameState = BoardState.INITIAL;
         this.isPlaying = false;
+        this.disabledGhosts = new ArrayList<>();
     }
+
     @Override
     public GameType getGameType() {
         return game;
@@ -62,27 +67,34 @@ public class AbstractBoard implements Board{
 
     @Override
     public void initialize() throws PacManException {
-        if(!isPlaying){
+        if (!isPlaying) {
             level = 1;
             score = 0;
-            scatterTime = new int[]{7*60, 7*60, 5*60, 5*60};
-            chaseTime = new int[]{20*60, 20*60, 20*60, -1};
-            frightTime = new int[]{6,5,4,3,2,5,2,2,1,5,2,1,1,3,1,1,-1,1,-1,-1,-1};
+            scatterTime = new int[]{7 * 60, 7 * 60, 5 * 60, 5 * 60};
+            chaseTime = new int[]{20 * 60, 20 * 60, 20 * 60, -1};
+            frightTime = new int[]{6, 5, 4, 3, 2, 5, 2, 2, 1, 5, 2, 1, 1, 3, 1, 1, -1, 1, -1, -1, -1};
             //Load PacMan
             setPacman(new PacMan(this));
             ghosts = new ArrayList<>();
+
             //Blinky
-            ghosts.add(new Blinky(this));
-            //Add last Pinky
-            ghosts.addLast(new Pinky(this));
-            //Add last Inky
-            ghosts.addLast(new Inky(this));
-            //Add last Clyde
-            ghosts.addLast(new Clyde(this));
-            //startActors();
+            if (!disabledGhosts.contains(GhostType.BLINKY)) {
+                ghosts.add(new Blinky(this));
+            }
+            //Pinky
+            if (!disabledGhosts.contains(GhostType.PINKY)) {
+                ghosts.add(new Pinky(this));
+            }
+            //Inky
+            if (!disabledGhosts.contains(GhostType.INKY)) {
+                ghosts.add(new Inky(this));
+            }
+            //Clyde
+            if (!disabledGhosts.contains(GhostType.CLYDE)) {
+                ghosts.add(new Clyde(this));
+            }
             isPlaying = true;
-        }
-        else {
+        } else {
             initializeNewLife();
         }
         scatterCtr = 0;
@@ -109,13 +121,15 @@ public class AbstractBoard implements Board{
         return pacman;
     }
 
-    public void setPacman(PacMan agent) { pacman = agent;}
+    public void setPacman(PacMan agent) {
+        pacman = agent;
+    }
 
     @Override
     public void nextFrame() {
         //PacMan turn
         pacman.nextFrame();
-        switch(maze.getTile(pacman.getCurrentTile())){
+        switch (maze.getTile(pacman.getCurrentTile())) {
             case SD, ND:
                 score += 10;
                 pacman.setStopTime(1);
@@ -127,59 +141,59 @@ public class AbstractBoard implements Board{
                 maze.setTile(pacman.getCurrentTile(), Tile.EE);
                 this.ghostPreviousState = ghostState;
                 ghostState = GhostState.FRIGHTENED;
-                this.frightTimer = frightTime[level-1];
+                this.frightTimer = frightTime[level - 1];
                 break;
         }
-        if(maze.getNumberOfDots() == 0){
+        if (maze.getNumberOfDots() == 0) {
             gameState = BoardState.LEVEL_OVER;
         }
         //Ghost turn
-        for(Ghost ghost: ghosts){
-            if(ghostState != ghost.getGhostState()){
-                ghost.setGhostState(ghostState);
-                ghost.reverseDirectionIntention();
-            }
+        for (Ghost ghost : ghosts) {
+            // TODO: !Important - Ask leo why this is here and if it is necessary
+//            if (ghostState != ghost.getGhostState()) {
+//                ghost.setGhostState(ghostState);
+//                ghost.reverseDirectionIntention();
+//            }
             ghost.nextFrame();
-            if(ghost.getCurrentTile().equals(pacman.getCurrentTile())){
-                if(pacman.getLifePoint() > 0){
+            if (ghost.getCurrentTile().equals(pacman.getCurrentTile())) {
+                if (pacman.getLifePoint() > 0) {
                     gameState = BoardState.LIFE_OVER;
-                }else gameState = BoardState.GAME_OVER;
+                } else gameState = BoardState.GAME_OVER;
 
             }
-            switch (maze.getTile(ghost.getCurrentTile())){
+            switch (maze.getTile(ghost.getCurrentTile())) {
                 case SL:
                     ghost.setSpeed(.5);
                     break;
                 default:
-                    if(ghost.getSpeed() == 0.5){
+                    if (ghost.getSpeed() == 0.5) {
                         ghost.setSpeed(1);
                     }
             }
         }
-        if(!disable && ghostState != GhostState.FRIGHTENED){
-            if(chaseTime[chaseCtr] != -1){
-                switch (ghostState){
+        if (!disable && ghostState != GhostState.FRIGHTENED) {
+            if (chaseTime[chaseCtr] != -1) {
+                switch (ghostState) {
                     case SCATTER:
                         scatterTime[scatterCtr]--;
-                        if(scatterTime[scatterCtr] == 0){
+                        if (scatterTime[scatterCtr] == 0) {
                             ghostState = GhostState.CHASE;
                             scatterCtr++;
                         }
                         break;
                     case CHASE:
                         chaseTime[chaseCtr]--;
-                        if(chaseTime[chaseCtr] == 0){
-                            if(scatterCtr < 3){
+                        if (chaseTime[chaseCtr] == 0) {
+                            if (scatterCtr < 3) {
                                 ghostState = GhostState.SCATTER;
                             }
                             chaseCtr++;
                         }
                 }
             }
-        }
-        else {
+        } else {
             frightTimer--;
-            if(frightTimer == 0){
+            if (frightTimer == 0) {
                 ghostState = ghostPreviousState;
             }
         }
@@ -202,18 +216,23 @@ public class AbstractBoard implements Board{
         this.gameState = state;
     }
 
-    public void setGhosts(List<Ghost> ghostList){
-        this.ghosts = ghostList;
-    }
-
     @Override
     public Ghost getGhost(GhostType ghostType) {
-        return ghosts.isEmpty() ? null : ghosts.get(ghostType.ordinal());
+        for (Ghost ghost : ghosts) {
+            if (ghost.getGhostType() == ghostType) {
+                return ghost;
+            }
+        }
+        return null;
     }
 
     @Override
     public List<Ghost> getGhosts() {
         return ghosts;
+    }
+
+    public void setGhosts(List<Ghost> ghostList) {
+        this.ghosts = ghostList;
     }
 
     //Step 3
@@ -227,8 +246,8 @@ public class AbstractBoard implements Board{
     public void initializeNewLevel(int level) throws PacManException {
         this.level = level;
         this.scatterCtr = 0;
-        switch (level){
-            case 2,3,4:
+        switch (level) {
+            case 2, 3, 4:
                 scatterTime = new int[]{7 * 60, 7 * 60, 5 * 60, 1};
                 chaseTime = new int[]{20 * 60, 20 * 60, 1033 * 60, -1};
                 break;
@@ -240,12 +259,12 @@ public class AbstractBoard implements Board{
     }
 
     @Override
-    public void setNumberOfLives(int nbLives) {
+    public int getNumberOfLives() {
+        return pacman.getLifePoint();
     }
 
     @Override
-    public int getNumberOfLives() {
-        return pacman.getLifePoint();
+    public void setNumberOfLives(int nbLives) {
     }
 
     @Override
@@ -268,6 +287,7 @@ public class AbstractBoard implements Board{
 
     @Override
     public void disableGhost(GhostType ghostType) {
+        disabledGhosts.add(ghostType);
 
     }
 
@@ -357,13 +377,13 @@ public class AbstractBoard implements Board{
     }
 
     @Override
-    public void setExtraLifeScore(int score) {
-
+    public int getExtraLifeScore() {
+        return 0;
     }
 
     @Override
-    public int getExtraLifeScore() {
-        return 0;
+    public void setExtraLifeScore(int score) {
+
     }
 
     @Override

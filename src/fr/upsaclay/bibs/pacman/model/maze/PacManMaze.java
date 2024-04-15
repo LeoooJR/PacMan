@@ -192,7 +192,7 @@ public class PacManMaze implements Maze{
         List<Color> colors = new ArrayList<>();
         colors.add(Color.BLACK); colors.addLast(Color.BLUE); colors.addLast(Color.pink);
         Color[][] test2 = Maze.loadFromFile("/Users/leojourdain/Documents/Java/Projet/Projet_Pacman/resources/tiles/BD.txt",colors);
-        System.out.println(Arrays.deepToString(test2));
+//        System.out.println(Arrays.deepToString(test2));
 
     }
 }

@@ -32,7 +32,9 @@ public class BlinkyTest {
     public void testDisableBlinky() throws PacManException {
         Board board = Board.createBoard(GameType.CLASSIC);
         board.disableGhost(GhostType.BLINKY);
+
         board.initialize();
+
         assertFalse(board.hasGhost(GhostType.BLINKY));
         assertNull(board.getGhost(GhostType.BLINKY));
     }
@@ -42,7 +44,7 @@ public class BlinkyTest {
         Board board = Board.createBoard(GameType.CLASSIC);
         board.initialize();
         Actor blinky = board.getPacMan();
-        blinky.setPosition(3,3);
+        blinky.setPosition(3, 3);
         assertEquals(blinky.getX(), 3);
         assertEquals(blinky.getY(), 3);
     }
@@ -52,12 +54,12 @@ public class BlinkyTest {
         Board board = Board.createBoard(GameType.CLASSIC);
         board.initialize();
         Actor blinky = board.getPacMan();
-        blinky.setPosition(3,3);
+        blinky.setPosition(3, 3);
         assertEquals(blinky.getX(), 3);
         assertEquals(blinky.getY(), 3);
-        assertEquals(blinky.getCurrentTile(), new TilePosition(0,0));
-        blinky.setPosition(120,115);
-        assertEquals(blinky.getCurrentTile(), new TilePosition(14,15));
+        assertEquals(blinky.getCurrentTile(), new TilePosition(0, 0));
+        blinky.setPosition(120, 115);
+        assertEquals(blinky.getCurrentTile(), new TilePosition(14, 15));
     }
 
     @Test
@@ -110,20 +112,32 @@ public class BlinkyTest {
 
     @Test
     public void testBlinkyNewIntention() throws PacManException {
+//        TODO: Leo the direction thing enjoy
         Board board = Board.createBoard(GameType.CLASSIC);
         board.initialize();
         Ghost blinky = board.getGhost(GhostType.BLINKY);
+        Direction intent = blinky.getIntention();
+
         blinky.setSpeed(1);
+        System.out.println(blinky.getCurrentTile());
         // We move one tile to the left
-        for(int i = 0; i < 8; i++) {
+        for (int i = 0; i < 8; i++) {
             board.nextFrame();
+            System.out.println(blinky.getCurrentTile());
+            intent = blinky.getIntention();
+            System.out.println(STR."Direction = \{blinky.getDirection()}");
+            System.out.println(STR."Intention = \{blinky.getIntention()}");
         }
+        System.out.println(blinky.getCurrentTile());
+        intent = blinky.getIntention();
+
         // Blinky has changed tile, it should get a new intention (which is left)
         assertEquals(blinky.getIntention(), Direction.LEFT);
     }
 
     @Test
     public void testBlinkyChaseTarget() throws PacManException {
+//        TODO: Leo the direction thing enjoy
         Board board = Board.createBoard(GameType.CLASSIC);
         board.disableStateTime();
         board.initialize();
@@ -135,7 +149,9 @@ public class BlinkyTest {
         TilePosition pacmacPos = board.getMaze().getTilePosition(pacman.getX(), pacman.getY());
         assertEquals(blinky.getTarget(), pacmacPos);
         // We move a bit
-        for(int i = 0; i < 20; i++) {
+        for (int i = 0; i < 20; i++) {
+            System.out.println(STR."Blinky position : \{blinky.getCurrentTile()} Target : \{blinky.getTarget()}");
+            System.out.println(STR."Pacman position : \{pacman.getCurrentTile()}");
             board.nextFrame();
         }
         // Pacman position has changed and the target should have also changed
@@ -146,10 +162,12 @@ public class BlinkyTest {
     /**
      * We let PacMan go left and stop and wait for Blinky to arrive at PacMan
      * We test the different directions and positions blinky reaches
+     *
      * @throws PacManException
      */
     @Test
     public void testBlinkyMoveToPacMan() throws PacManException {
+//        TODO: here too
         Board board = Board.createBoard(GameType.CLASSIC);
         board.disableStateTime();
         board.initialize();
@@ -163,7 +181,7 @@ public class BlinkyTest {
         while (blinky.getDirection() == Direction.LEFT) {
             board.nextFrame();
         }
-        System.out.println(blinky.getDirection());
+//        System.out.println(blinky.getDirection());
         // The next direction should be down
         assertEquals(blinky.getDirection(), Direction.DOWN);
         // Blnky should be in tile (14,9) (corner top left above the ghost pen)
@@ -188,10 +206,12 @@ public class BlinkyTest {
     /**
      * We let PacMan go right and stop and wait for Blinky to arrive at PacMan
      * We test the different directions and positions blinky reaches
+     *
      * @throws PacManException
      */
     @Test
     public void testBlinkyMoveToPacMan2() throws PacManException {
+//        TODO: Infinite loop here
         Board board = Board.createBoard(GameType.CLASSIC);
         board.disableStateTime();
         board.initialize();
@@ -238,6 +258,7 @@ public class BlinkyTest {
 
     @Test
     public void testBlinkyNoTurnUp() throws PacManException {
+//        TODO: Imfinite loop here
         Board board = Board.createBoard(GameType.CLASSIC);
         board.disableStateTime();
         board.initialize();
@@ -247,12 +268,12 @@ public class BlinkyTest {
         Actor pacman = board.getPacMan();
         pacman.setPosition(208, 35); // (top right corner)
         board.startActors();
-        TilePosition nt = new TilePosition(14,12);
+        TilePosition nt = new TilePosition(14, 12);
         while (!blinky.getCurrentTile().equals(nt)) {
             board.nextFrame();
         }
-        assertEquals(maze.getTile(14,12), Tile.NT);
-        assertEquals(maze.getTile(13,12), Tile.EE);
+        assertEquals(maze.getTile(14, 12), Tile.NT);
+        assertEquals(maze.getTile(13, 12), Tile.EE);
         // Blinky is on tile of type NT. It cannot turn up even  though pacman is up
         assertEquals(blinky.getDirection(), Direction.LEFT);
         while (blinky.getCurrentTile().equals(nt)) {
@@ -264,26 +285,28 @@ public class BlinkyTest {
 
     /**
      * Same test than testBlinkyNoTurnUp but with SD
+     *
      * @throws PacManException
      */
     @Test
     public void testBlinkyNoTurnUp2() throws PacManException {
+//        //        TODO: Leo the direction thing enjoy there is a loop here
         Board board = Board.createBoard(GameType.CLASSIC);
         board.disableStateTime();
         board.initialize();
         Maze maze = board.getMaze();
-        maze.setTile(14,12,Tile.ND);
+        maze.setTile(14, 12, Tile.ND);
         Ghost blinky = board.getGhost(GhostType.BLINKY);
         blinky.setGhostState(GhostState.CHASE);
         Actor pacman = board.getPacMan();
         pacman.setPosition(208, 35); // (top right corner)
         board.startActors();
-        TilePosition nt = new TilePosition(14,12);
+        TilePosition nt = new TilePosition(14, 12);
         while (!blinky.getCurrentTile().equals(nt)) {
             board.nextFrame();
         }
-        assertEquals(maze.getTile(14,12), Tile.ND);
-        assertEquals(maze.getTile(13,12), Tile.EE);
+        assertEquals(maze.getTile(14, 12), Tile.ND);
+        assertEquals(maze.getTile(13, 12), Tile.EE);
         // Blinky is on tile of type ND. It cannot turn up even  though pacman is up
         assertEquals(blinky.getDirection(), Direction.LEFT);
         while (blinky.getCurrentTile().equals(nt)) {
@@ -299,10 +322,10 @@ public class BlinkyTest {
         board.initialize();
         Maze maze = board.getMaze();
         // We change the NT in front of blinky into an EE
-        maze.setTile(14,12,Tile.EE);
+        maze.setTile(14, 12, Tile.EE);
         Ghost blinky = board.getGhost(GhostType.BLINKY);
         board.startActors();
-        TilePosition nt = new TilePosition(14,12);
+        TilePosition nt = new TilePosition(14, 12);
         while (!blinky.getCurrentTile().equals(nt)) {
             board.nextFrame();
         }
@@ -396,6 +419,7 @@ public class BlinkyTest {
         assertEquals(blinky.getDirection(), Direction.RIGHT);
         blinky.changeGhostState(GhostState.FRIGHTENED_END);
         assertEquals(blinky.getGhostState(), GhostState.FRIGHTENED_END);
+        //        TODO: Leo the direction thing enjoy
         assertEquals(blinky.getIntention(), Direction.RIGHT); // No turning around
         blinky.changeGhostState(GhostState.SCATTER);
         assertEquals(blinky.getGhostState(), GhostState.SCATTER);
@@ -419,6 +443,7 @@ public class BlinkyTest {
         assertEquals(blinky.getDirection(), Direction.RIGHT);
         blinky.changeGhostState(GhostState.FRIGHTENED_END);
         assertEquals(blinky.getGhostState(), GhostState.FRIGHTENED_END);
+        //        TODO: Leo the direction thing enjoy
         assertEquals(blinky.getIntention(), Direction.RIGHT); // No turning around
         blinky.changeGhostState(GhostState.CHASE);
         assertEquals(blinky.getGhostState(), GhostState.CHASE);
@@ -437,6 +462,7 @@ public class BlinkyTest {
         while (blinky.getDirection() == Direction.LEFT) {
             board.nextFrame();
         }
+        //        TODO: Leo the direction thing enjoy
         assertEquals(blinky.getCurrentTile(), new TilePosition(14, 9));
         assertEquals(blinky.getDirection(), Direction.DOWN);
         while (blinky.getDirection() == Direction.DOWN) {
@@ -458,6 +484,7 @@ public class BlinkyTest {
 
     @Test
     public void testMovingFrightenEnd() throws PacManException {
+
         Board board = Board.createBoard(GameType.CLASSIC);
         board.initialize();
         Configurations.blockGhosts(board.getMaze());
@@ -468,6 +495,7 @@ public class BlinkyTest {
         while (blinky.getDirection() == Direction.LEFT) {
             board.nextFrame();
         }
+//        TODO: Leo the direction thing enjoy
         assertEquals(blinky.getCurrentTile(), new TilePosition(14, 9));
         assertEquals(blinky.getDirection(), Direction.DOWN);
         while (blinky.getDirection() == Direction.DOWN) {
@@ -494,6 +522,7 @@ public class BlinkyTest {
         Ghost blinky = board.getGhost(GhostType.BLINKY);
         board.startActors();
         blinky.setGhostState(GhostState.DEAD);
+//      TODO: Still not sure about this --- Jaffar will come back to it
         assertEquals(blinky.getTarget(), board.penEntry());
     }
 
@@ -577,7 +606,7 @@ public class BlinkyTest {
         Ghost blinky = board.getGhost(GhostType.BLINKY);
         board.startActors();
         // We move a bit
-        for (int i = 0; i < 8; i ++) {
+        for (int i = 0; i < 8; i++) {
             board.nextFrame();
         }
         blinky.setGhostState(GhostState.FRIGHTENED);
@@ -594,7 +623,7 @@ public class BlinkyTest {
         Ghost blinky = board.getGhost(GhostType.BLINKY);
         board.startActors();
         // We move a bit
-        for (int i = 0; i < 8; i ++) {
+        for (int i = 0; i < 8; i++) {
             board.nextFrame();
         }
         blinky.setGhostState(GhostState.FRIGHTENED_END);
@@ -603,8 +632,10 @@ public class BlinkyTest {
         assertEquals(blinky.getIntention(), Direction.LEFT);
     }
 
-    /** We test that when blinky is set to dead, it actually goes to the
+    /**
+     * We test that when blinky is set to dead, it actually goes to the
      * ghost pen and gets realive and out
+     *
      * @throws PacManException
      */
     @Test
@@ -618,7 +649,7 @@ public class BlinkyTest {
         blinky.setGhostState(GhostState.SCATTER);
         board.startActors();
         // Let's move a bit
-        for(int i =0; i <50; i++) {
+        for (int i = 0; i < 50; i++) {
             board.nextFrame();
         }
         // Now we change blinky to dead
@@ -633,7 +664,7 @@ public class BlinkyTest {
         assertEquals(blinky.getGhostState(), GhostState.DEAD);
         assertEquals(blinky.getX(), board.outPenXPosition());
         assertEquals(blinky.getY(), board.outPenYPosition());
-       // Now blinky is entering the pen
+        // Now blinky is entering the pen
         // At some point it should be in pen
         while (blinky.getGhostPenState() == GhostPenState.GET_IN) {
             board.nextFrame();
@@ -654,9 +685,11 @@ public class BlinkyTest {
         assertEquals(blinky.getY(), board.outPenYPosition());
     }
 
-    /** We test that when blinky is set to dead, it actually goes to the
+    /**
+     * We test that when blinky is set to dead, it actually goes to the
      * ghost pen and gets realive
      * Test in the "Second life" case
+     *
      * @throws PacManException
      */
     @Test
@@ -671,7 +704,7 @@ public class BlinkyTest {
         blinky.setGhostState(GhostState.SCATTER);
         board.startActors();
         // Let's move a bit
-        for(int i =0; i <50; i++) {
+        for (int i = 0; i < 50; i++) {
             board.nextFrame();
         }
         // Now we change blinky to dead
@@ -710,6 +743,7 @@ public class BlinkyTest {
     /**
      * We test that the out of pen direction is actually used
      * when getting out of pen
+     *
      * @throws PacManException
      */
     @Test
@@ -723,7 +757,7 @@ public class BlinkyTest {
         blinky.setGhostState(GhostState.SCATTER);
         board.startActors();
         // Let's move a bit
-        for(int i =0; i <50; i++) {
+        for (int i = 0; i < 50; i++) {
             board.nextFrame();
         }
         // Now we change blinky to dead
@@ -767,10 +801,10 @@ public class BlinkyTest {
         Maze maze = board.getMaze();
         Configurations.blockGhosts(maze);
         // We remove all dots except one
-        for(int i =0; i < maze.getHeight(); i++) {
-            for(int j=0; j < maze.getWidth(); j++) {
-                if(maze.getTile(i,j).hasDot() && (i != 26 || j != 12)) {
-                    maze.setTile(i,j,maze.getTile(i,j).clearDot());
+        for (int i = 0; i < maze.getHeight(); i++) {
+            for (int j = 0; j < maze.getWidth(); j++) {
+                if (maze.getTile(i, j).hasDot() && (i != 26 || j != 12)) {
+                    maze.setTile(i, j, maze.getTile(i, j).clearDot());
                 }
             }
         }
@@ -804,11 +838,11 @@ public class BlinkyTest {
         board.initialize();
         Maze maze = board.getMaze();
         // We change the NT in front of blinky into an SL
-        maze.setTile(14,12,Tile.SL);
+        maze.setTile(14, 12, Tile.SL);
         Ghost blinky = board.getGhost(GhostType.BLINKY);
         Actor pacman = board.getPacMan();
         board.startActors();
-        TilePosition nt = new TilePosition(14,12);
+        TilePosition nt = new TilePosition(14, 12);
         while (!blinky.getCurrentTile().equals(nt)) {
             board.nextFrame();
         }
@@ -823,10 +857,10 @@ public class BlinkyTest {
         board.initializeNewLevel(4);
         Maze maze = board.getMaze();
         // We change the NT in front of blinky into an SL
-        maze.setTile(14,12,Tile.SL);
+        maze.setTile(14, 12, Tile.SL);
         Ghost blinky = board.getGhost(GhostType.BLINKY);
         board.startActors();
-        TilePosition nt = new TilePosition(14,12);
+        TilePosition nt = new TilePosition(14, 12);
         while (!blinky.getCurrentTile().equals(nt)) {
             board.nextFrame();
         }
@@ -838,6 +872,7 @@ public class BlinkyTest {
      * We test that after being dead and alive again,
      * the ghost returns to normal speed
      * when getting out of pen
+     *
      * @throws PacManException
      */
     @Test
@@ -850,7 +885,7 @@ public class BlinkyTest {
         blinky.setGhostState(GhostState.SCATTER);
         board.startActors();
         // Let's move a bit
-        for(int i =0; i <50; i++) {
+        for (int i = 0; i < 50; i++) {
             board.nextFrame();
         }
         // Now we change blinky to dead
@@ -882,29 +917,27 @@ public class BlinkyTest {
             board.nextFrame();
         }
         // Blinky changes direction, it should be at the center of the tile
-        assertEquals(blinky.getX()%Maze.TILE_WIDTH, Maze.TITLE_CENTER_X);
-        assertEquals(blinky.getY()%Maze.TILE_HEIGHT, Maze.TITLE_CENTER_Y);
+        assertEquals(blinky.getX() % Maze.TILE_WIDTH, Maze.TITLE_CENTER_X);
+        assertEquals(blinky.getY() % Maze.TILE_HEIGHT, Maze.TITLE_CENTER_Y);
         while (blinky.getDirection() == Direction.DOWN) {
             board.nextFrame();
         }
         // Blinky changes direction, it should be at the center of the tile
-        assertEquals(blinky.getX()%Maze.TILE_WIDTH, Maze.TITLE_CENTER_X);
-        assertEquals(blinky.getY()%Maze.TILE_HEIGHT, Maze.TITLE_CENTER_Y);
+        assertEquals(blinky.getX() % Maze.TILE_WIDTH, Maze.TITLE_CENTER_X);
+        assertEquals(blinky.getY() % Maze.TILE_HEIGHT, Maze.TITLE_CENTER_Y);
         while (blinky.getDirection() == Direction.RIGHT) {
             board.nextFrame();
         }
         // Blinky changes direction, it should be at the center of the tile
-        assertEquals(blinky.getX()%Maze.TILE_WIDTH, Maze.TITLE_CENTER_X);
-        assertEquals(blinky.getY()%Maze.TILE_HEIGHT, Maze.TITLE_CENTER_Y);
+        assertEquals(blinky.getX() % Maze.TILE_WIDTH, Maze.TITLE_CENTER_X);
+        assertEquals(blinky.getY() % Maze.TILE_HEIGHT, Maze.TITLE_CENTER_Y);
         while (blinky.getDirection() == Direction.UP) {
             board.nextFrame();
         }
         // Blinky changes direction, it should be at the center of the tile
-        assertEquals(blinky.getX()%Maze.TILE_WIDTH, Maze.TITLE_CENTER_X);
-        assertEquals(blinky.getY()%Maze.TILE_HEIGHT, Maze.TITLE_CENTER_Y);
+        assertEquals(blinky.getX() % Maze.TILE_WIDTH, Maze.TITLE_CENTER_X);
+        assertEquals(blinky.getY() % Maze.TILE_HEIGHT, Maze.TITLE_CENTER_Y);
     }
-
-
 
 
 }

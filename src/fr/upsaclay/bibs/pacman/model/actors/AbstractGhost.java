@@ -5,11 +5,12 @@ import fr.upsaclay.bibs.pacman.model.board.Board;
 import fr.upsaclay.bibs.pacman.model.board.Counter;
 import fr.upsaclay.bibs.pacman.model.maze.Tile;
 import fr.upsaclay.bibs.pacman.model.maze.TilePosition;
+
 import java.lang.Math;
 import java.sql.Array;
 import java.util.Arrays;
 
-public class AbstractGhost extends AbstractActor implements Ghost{
+public class AbstractGhost extends AbstractActor implements Ghost {
 
     private GhostType ghostType;
 
@@ -19,10 +20,13 @@ public class AbstractGhost extends AbstractActor implements Ghost{
 
     private GhostPenState penState;
 
-    public AbstractGhost(Board board,GhostType type){
+    public AbstractGhost(Board board, GhostType type) {
         super(ActorType.GHOST, board);
         ghostType = type;
+//        TODO: I set the ghost state to scatter for all the ghosts at the start
+        ghostState = GhostState.SCATTER;
     }
+
     @Override
     public GhostType getGhostType() {
         return ghostType;
@@ -35,64 +39,64 @@ public class AbstractGhost extends AbstractActor implements Ghost{
 
     @Override
     public boolean isBlocked(TilePosition tile) {
-        if (penState == GhostPenState.IN){
-            if(getBoard().getMaze().getNeighbourTile(tile,getDirection()) == Tile.GD){
+        if (penState == GhostPenState.IN) {
+            if (getBoard().getMaze().getNeighbourTile(tile, getDirection()) == Tile.GD) {
                 return false;
             }
-        }
-        else {
-             return super.isBlocked(tile);
+        } else {
+            return super.isBlocked(tile);
         }
         return false;
     }
 
-    public Direction computeDirection(){
+    public Direction computeDirection() {
         double[] distArray = new double[4];
         double min = Double.MAX_VALUE;
-        int minId = -1; double x; double y;
+        int minId = -1;
+        double x;
+        double y;
         TilePosition nextTile = (getBoard().getMaze().getNeighbourTilePosition(getCurrentTile(), getDirection()));
-        for(Direction dir: Direction.values()){
-            if(dir != getDirection().reverse()){
-                if(tryThisWay(dir,nextTile)){
-                    System.out.println("Direction testée : " + dir);
+        for (Direction dir : Direction.values()) {
+            if (dir != getDirection().reverse()) {
+                if (tryThisWay(dir, nextTile)) {
+//                    System.out.println("Direction testée : " + dir);
                     /**x = ((getBoard().getMaze().getNeighbourTilePosition(nextTile,dir).getCol() * getBoard().getMaze().TILE_WIDTH) + getBoard().getMaze().TITLE_CENTER_X) - ((getTarget().getCol() * getBoard().getMaze().TILE_WIDTH) + getBoard().getMaze().TITLE_CENTER_X);
-                    y = ((getBoard().getMaze().getNeighbourTilePosition(nextTile,dir).getLine() * getBoard().getMaze().TILE_HEIGHT) + getBoard().getMaze().TITLE_CENTER_Y) - ((getTarget().getLine() * getBoard().getMaze().TILE_HEIGHT) + getBoard().getMaze().TITLE_CENTER_Y);
-                    distArray[dir.ordinal()] = Math.sqrt((x*x)+(y*y));**/
-                    x = getBoard().getMaze().getNeighbourTilePosition(nextTile,dir).getCol() - getTarget().getCol();
-                    System.out.println("X : " + x);
-                    y = getBoard().getMaze().getNeighbourTilePosition(nextTile,dir).getLine() - getTarget().getLine();
-                    System.out.println("Y : " + y);
-                    distArray[dir.ordinal()] = Math.sqrt((x*x)+(y*y));
-                    if(distArray[dir.ordinal()] < min){
+                     y = ((getBoard().getMaze().getNeighbourTilePosition(nextTile,dir).getLine() * getBoard().getMaze().TILE_HEIGHT) + getBoard().getMaze().TITLE_CENTER_Y) - ((getTarget().getLine() * getBoard().getMaze().TILE_HEIGHT) + getBoard().getMaze().TITLE_CENTER_Y);
+                     distArray[dir.ordinal()] = Math.sqrt((x*x)+(y*y));**/
+                    x = getBoard().getMaze().getNeighbourTilePosition(nextTile, dir).getCol() - getTarget().getCol();
+//                    System.out.println("X : " + x);
+                    y = getBoard().getMaze().getNeighbourTilePosition(nextTile, dir).getLine() - getTarget().getLine();
+//                    System.out.println("Y : " + y);
+                    distArray[dir.ordinal()] = Math.sqrt((x * x) + (y * y));
+                    if (distArray[dir.ordinal()] < min) {
                         minId = dir.ordinal();
                         min = distArray[dir.ordinal()];
                     }
                 }
             }
         }
-        System.out.println(Arrays.toString(distArray));
+//        System.out.println(Arrays.toString(distArray));
         return minId >= 0 ? Direction.values()[minId] : null;
     }
+
     @Override
     public void nextMove() {
-        System.out.println("Blinky Move");
-        if(isCentered()){
-            System.out.println("Blinky est centré");
+//        System.out.println("Blinky Move");
+        if (isCentered()) {
+//            System.out.println("Blinky est centré");
             goThisWay(getIntention());
-            if(getGhostState() != GhostState.FRIGHTENED){
+            if (getGhostState() != GhostState.FRIGHTENED) {
                 setIntention(computeDirection());
-            }
-            else{
-                int resRandom = (int)(Math.random() * (3 + 1));
-                System.out.println("Resultat random : " + resRandom);
-                if(tryThisWay(Direction.values()[resRandom],getCurrentTile())){
+            } else {
+                int resRandom = (int) (Math.random() * (3 + 1));
+//                System.out.println("Resultat random : " + resRandom);
+                if (tryThisWay(Direction.values()[resRandom], getCurrentTile())) {
                     setIntention(Direction.values()[resRandom]);
-                }
-                else{
+                } else {
                     boolean randWay = false;
-                    for(Direction direction: Direction.values()){
-                        if(direction != Direction.values()[resRandom] && !randWay){
-                            if(tryThisWay(direction,getCurrentTile())){
+                    for (Direction direction : Direction.values()) {
+                        if (direction != Direction.values()[resRandom] && !randWay) {
+                            if (tryThisWay(direction, getCurrentTile())) {
                                 setIntention(direction);
                                 randWay = true;
                             }
@@ -100,11 +104,11 @@ public class AbstractGhost extends AbstractActor implements Ghost{
                     }
                 }
             }
-            System.out.println("Blinky intention :" + getIntention());
+//            System.out.println("Blinky intention :" + getIntention());
         }
         super.nextMove();
-        if(penState == GhostPenState.IN){
-            if(getCurrentTile().getLine() <= 14 && getCurrentTile().getCol() >= 13){
+        if (penState == GhostPenState.IN) {
+            if (getCurrentTile().getLine() <= 14 && getCurrentTile().getCol() >= 13) {
                 penState = GhostPenState.OUT;
                 ghostState = GhostState.SCATTER;
             }
@@ -114,13 +118,25 @@ public class AbstractGhost extends AbstractActor implements Ghost{
     //Step 3
 
     @Override
-    public void setGhostState(GhostState state) {
-        ghostState = state;
-    }
-
-    @Override
     public void changeGhostState(GhostState state) {
-        reverseDirectionIntention();
+        // Only reverse direction if the current state is not frightened
+        GhostState currentState = getGhostState();
+        // Something weird happens when you try to simplify this into SWITCH
+
+        if (currentState == GhostState.CHASE && state == GhostState.SCATTER){
+            reverseDirectionIntention();
+        }
+        if(currentState == GhostState.SCATTER && state == GhostState.CHASE){
+            reverseDirectionIntention();
+        }
+        if (currentState == GhostState.CHASE && state == GhostState.FRIGHTENED){
+            reverseDirectionIntention();
+        }
+        if (currentState == GhostState.SCATTER && state == GhostState.FRIGHTENED){
+            reverseDirectionIntention();
+        }
+
+        setGhostState(state);
     }
 
     @Override
@@ -129,8 +145,8 @@ public class AbstractGhost extends AbstractActor implements Ghost{
     }
 
     @Override
-    public void setGhostPenState(GhostPenState state) {
-        penState = state;
+    public void setGhostState(GhostState state) {
+        ghostState = state;
     }
 
     @Override
@@ -139,13 +155,18 @@ public class AbstractGhost extends AbstractActor implements Ghost{
     }
 
     @Override
-    public void setOutOfPenDirection(Direction dir) {
-
+    public void setGhostPenState(GhostPenState state) {
+        penState = state;
     }
 
     @Override
     public Direction getOutOfPenDirection() {
         return null;
+    }
+
+    @Override
+    public void setOutOfPenDirection(Direction dir) {
+
     }
 
     @Override
@@ -164,12 +185,12 @@ public class AbstractGhost extends AbstractActor implements Ghost{
     }
 
     @Override
-    public void setElroy(int elroy) {
-
+    public int getElroy() {
+        return 0;
     }
 
     @Override
-    public int getElroy() {
-        return 0;
+    public void setElroy(int elroy) {
+
     }
 }
