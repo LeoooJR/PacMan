@@ -221,11 +221,12 @@ public class PacManGameView extends JFrame implements PacManView {
                 addKeyListener(playListener);
                 break;
             case PAUSE:
+                this.layout = PacManLayout.PAUSE;
                 cardLayout.show(cards, "PAUSE");
                 timer.stop();
+                requestFocus();
                 removeKeyListener(playListener);
                 addKeyListener(startListener);
-                requestFocus();
                 break;
             case LEVEL_OVER:
                 cardLayout.show(cards, "LEVEL_OVER");
@@ -245,6 +246,7 @@ public class PacManGameView extends JFrame implements PacManView {
     }
 
     public void setMaze(Maze maze) {
+        maze = board.getMaze();
         gamePanel.setMaze(maze);
     }
 

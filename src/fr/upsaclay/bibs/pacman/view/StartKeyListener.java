@@ -12,26 +12,34 @@ public class StartKeyListener implements KeyListener {
     private final Controller controller;
     private final PacManGameView view;
     public StartKeyListener(Controller controller, PacManGameView view){
+        System.out.println("StartKeyListener");
         this.controller = controller;
         this.view = view;
     }
     @Override
-    public void keyTyped(KeyEvent e) {
+    public void keyPressed(KeyEvent e) {
         try {
-            switch (view.getViewLayout()){
+            switch (view.getViewLayout()) {
                 case INIT:
-                    controller.receiveAction(GameAction.START); break;
+                    if (e.getKeyCode() == KeyEvent.VK_SPACE) { // Assuming Enter to start
+                        controller.receiveAction(GameAction.START);
+                    }
+                    break;
                 case PAUSE:
-                    controller.receiveAction(GameAction.RESUME); break;
+                    if (e.getKeyCode() == KeyEvent.VK_SPACE) { // Assuming Enter to resume
+                        System.out.println("PAUSE KEY PRESSED");
+                        controller.receiveAction(GameAction.RESUME);
+                    }
+                    break;
             }
-
         } catch (PacManException ex) {
             throw new RuntimeException(ex);
         }
     }
 
     @Override
-    public void keyPressed(KeyEvent e) {
+    public void keyTyped(KeyEvent e) {
+
 
     }
 
