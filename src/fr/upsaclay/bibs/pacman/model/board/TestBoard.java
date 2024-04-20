@@ -17,13 +17,15 @@ public class TestBoard extends AbstractBoard{
     @Override
     public void initialize() throws PacManException{
         //Load the maze
+
         try {
-            setMaze(Maze.loadFromFile("resources/test.txt"));
+            super.setMaze(Maze.loadFromFile("resources/test.txt"));
 //            System.out.println("Initialisation");
         }
         catch(FileNotFoundException e){
             throw new RuntimeException(e);
         }
+        super.initialize();
         //Load PacMan
         setPacman(new PacMan(this));
         //startActors();

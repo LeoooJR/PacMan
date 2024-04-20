@@ -24,16 +24,16 @@ public class PlayKeyListener implements KeyListener {
     public void keyPressed(KeyEvent e) {
         try {
             switch (e.getKeyCode()) {
-                case KeyEvent.VK_RIGHT:
+                case KeyEvent.VK_S:
                     controller.receiveAction(GameAction.RIGHT);
                     break;
-                case KeyEvent.VK_LEFT:
+                case KeyEvent.VK_A:
                     controller.receiveAction(GameAction.LEFT);
                     break;
-                case KeyEvent.VK_UP:
+                case KeyEvent.VK_W:
                     controller.receiveAction(GameAction.UP);
                     break;
-                case KeyEvent.VK_DOWN:
+                case KeyEvent.VK_Z:
                     controller.receiveAction(GameAction.DOWN);
                     break;
                 case KeyEvent.VK_ESCAPE:

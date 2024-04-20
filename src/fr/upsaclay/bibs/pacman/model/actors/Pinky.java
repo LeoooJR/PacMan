@@ -14,33 +14,38 @@ public class Pinky extends AbstractGhost{
         initializePinky();
     }
 
-    @Override
-    public TilePosition getTarget(){
-        if(getGhostPenState() == GhostPenState.IN){
-            return new TilePosition(14,14);
-        }
-        else{
-            if(getGhostState() == GhostState.CHASE){
-                int colPacMan = getBoard().getPacMan().getCurrentTile().getCol();
-                int rowPacMan = getBoard().getPacMan().getCurrentTile().getLine();
-                switch (getBoard().getPacMan().getDirection()){
-                    case LEFT:
-                        return new TilePosition(rowPacMan,colPacMan - 4);
-                    case RIGHT:
-                        return new TilePosition(rowPacMan,colPacMan + 4);
-                    case DOWN:
-                        return new TilePosition(rowPacMan + 4, colPacMan);
-                    case UP:
-                        return new TilePosition(rowPacMan - 4, colPacMan);
-                }
-                return new TilePosition(rowPacMan,colPacMan);
+  @Override
+public TilePosition getTarget() {
+    if (getGhostPenState() == GhostPenState.IN) {
+        return new TilePosition(14, 14);
+    }
 
-            }
-            else{
-                return scatterTilePosition;
-            }
+    if(getGhostState() == GhostState.FRIGHTENED || getGhostState() == GhostState.FRIGHTENED_END){
+        return null;
+    }
+
+    if (getGhostState() == GhostState.CHASE) {
+        TilePosition pacManPosition = getBoard().getPacMan().getCurrentTile();
+        int colPacMan = pacManPosition.getCol();
+        int rowPacMan = pacManPosition.getLine();
+        Direction pacManDirection = getBoard().getPacMan().getDirection();
+
+        switch (pacManDirection) {
+            case LEFT:
+                return new TilePosition(rowPacMan, colPacMan - 4);
+            case RIGHT:
+                return new TilePosition(rowPacMan, colPacMan + 4);
+            case DOWN:
+                return new TilePosition(rowPacMan + 4, colPacMan);
+            case UP:
+                return new TilePosition(rowPacMan - 4, colPacMan - 4);
+            default:
+                return new TilePosition(rowPacMan, colPacMan);
         }
     }
+
+    return scatterTilePosition;
+}
 
     public void initializePinky(){
         setPosition(112,139);
@@ -50,4 +55,5 @@ public class Pinky extends AbstractGhost{
         setIntention(this.computeDirection());
         setGhostPenState(GhostPenState.IN);
     }
+
 }

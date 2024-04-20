@@ -117,27 +117,32 @@ public class BlinkyTest {
         board.initialize();
         Ghost blinky = board.getGhost(GhostType.BLINKY);
         Direction intent = blinky.getIntention();
-
+//        Change state of the board
+        blinky.setGhostState(GhostState.CHASE);
         blinky.setSpeed(1);
-        System.out.println(blinky.getCurrentTile());
+        System.out.println("****" + blinky.getCurrentTile());
         // We move one tile to the left
         for (int i = 0; i < 8; i++) {
+            System.out.println("*****" + i);
+
             board.nextFrame();
+            blinky.setGhostState(GhostState.CHASE);
             System.out.println(blinky.getCurrentTile());
             intent = blinky.getIntention();
+
             System.out.println(STR."Direction = \{blinky.getDirection()}");
             System.out.println(STR."Intention = \{blinky.getIntention()}");
         }
         System.out.println(blinky.getCurrentTile());
         intent = blinky.getIntention();
-
+        TilePosition pacman = board.getMaze().getTilePosition(board.getPacMan().getX(), board.getPacMan().getY());
+        System.out.println(STR."Pacman = \{pacman}");
         // Blinky has changed tile, it should get a new intention (which is left)
         assertEquals(blinky.getIntention(), Direction.LEFT);
     }
 
     @Test
     public void testBlinkyChaseTarget() throws PacManException {
-//        TODO: Leo the direction thing enjoy
         Board board = Board.createBoard(GameType.CLASSIC);
         board.disableStateTime();
         board.initialize();
@@ -153,6 +158,8 @@ public class BlinkyTest {
             System.out.println(STR."Blinky position : \{blinky.getCurrentTile()} Target : \{blinky.getTarget()}");
             System.out.println(STR."Pacman position : \{pacman.getCurrentTile()}");
             board.nextFrame();
+            blinky.setGhostState(GhostState.CHASE);
+            System.out.println("Ghost state is : " + blinky.getGhostState());
         }
         // Pacman position has changed and the target should have also changed
         pacmacPos = board.getMaze().getTilePosition(pacman.getX(), pacman.getY());
@@ -180,8 +187,16 @@ public class BlinkyTest {
         // If this is an infinite loop, it means something is wrong
         while (blinky.getDirection() == Direction.LEFT) {
             board.nextFrame();
+//            blinky.setGhostState(GhostState.CHASE);
+
+            System.out.println(blinky.getDirection());
+            System.out.println(blinky.getCurrentTile());
+            System.out.println(pacman.getCurrentTile());
+            System.out.println(blinky.getTarget());
+//            blinky.setGhostState(GhostState.CHASE);
+            System.out.println(blinky.getGhostState());
         }
-//        System.out.println(blinky.getDirection());
+//
         // The next direction should be down
         assertEquals(blinky.getDirection(), Direction.DOWN);
         // Blnky should be in tile (14,9) (corner top left above the ghost pen)
@@ -211,7 +226,6 @@ public class BlinkyTest {
      */
     @Test
     public void testBlinkyMoveToPacMan2() throws PacManException {
-//        TODO: Infinite loop here
         Board board = Board.createBoard(GameType.CLASSIC);
         board.disableStateTime();
         board.initialize();
@@ -224,6 +238,11 @@ public class BlinkyTest {
         // If this is an infinite loop, it means something is wrong
         while (blinky.getDirection() == Direction.LEFT) {
             board.nextFrame();
+            System.out.println("Blinky's Direction: " + blinky.getDirection());
+            System.out.println("Blinky's Current Tile: " + blinky.getCurrentTile());
+            System.out.println(STR."Pacman's Current Tile: \{pacman.getCurrentTile()}Pacman's Direction: \{pacman.getDirection()}");
+            System.out.println("Blinky's Target: " + blinky.getTarget());
+
         }
         // The next direction should be down
         assertEquals(blinky.getDirection(), Direction.DOWN);
@@ -232,8 +251,18 @@ public class BlinkyTest {
         // We move as long as its down
         while (blinky.getDirection() == Direction.DOWN) {
             board.nextFrame();
+            System.out.println("Blinky's Direction: " + blinky.getDirection());
+            System.out.println("Blinky's Current Tile: " + blinky.getCurrentTile());
+            System.out.println("Pacman's Current Tile: " + pacman.getCurrentTile());
+            System.out.println("Blinky's Target: " + blinky.getTarget());
         }
         // It should be right
+        TilePosition pos = blinky.getCurrentTile();
+        TilePosition tar = blinky.getTarget();
+        Direction dir = blinky.getDirection();
+        TilePosition pac = pacman.getCurrentTile();
+        System.out.println(STR."Pacman's Current Tile: \{pacman.getCurrentTile()}");
+        Direction inten = blinky.getIntention();
         assertEquals(blinky.getDirection(), Direction.RIGHT);
         // Blinky should be in (20, 9)
         assertEquals(blinky.getCurrentTile(), new TilePosition(20, 9));

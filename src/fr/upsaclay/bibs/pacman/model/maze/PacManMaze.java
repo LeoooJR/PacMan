@@ -131,28 +131,19 @@ public class PacManMaze implements Maze{
         }
     }
 
-    @Override
-    public Tile getNeighbourTile(TilePosition pos, Direction dir) {
-        switch (dir){
-            case Direction.UP, Direction.DOWN:
-                if(pos.getLine() + dir.getDy() < 0){
-                    return maze[height-1][pos.getCol()];
-                }
-                else if(pos.getLine() + dir.getDy() >= height){
-                    return maze[0][pos.getCol()];
-                }
-                else {return maze[pos.getLine() + dir.getDy()][pos.getCol()];}
-            case Direction.RIGHT, Direction.LEFT:
-                if(pos.getCol() + dir.getDx() < 0){
-                    return maze[pos.getLine()][width-1];
-                }
-                else if(pos.getCol() + dir.getDx() >= width){
-                    return maze[pos.getLine()][0];
-                }
-                else {return maze[pos.getLine()][pos.getCol() + dir.getDx()];}
-            default: return maze[pos.getLine()][pos.getCol()];
-        }
-    }
+@Override
+public Tile getNeighbourTile(TilePosition pos, Direction dir) {
+    int line = pos.getLine() + dir.getDy();
+    int col = pos.getCol() + dir.getDx();
+
+    if (line < 0) line = height - 1;
+    else if (line >= height) line = 0;
+
+    if (col < 0) col = width - 1;
+    else if (col >= width) col = 0;
+
+    return maze[line][col];
+}
 
     @Override
     public void setTile(int line, int col, Tile tile) {

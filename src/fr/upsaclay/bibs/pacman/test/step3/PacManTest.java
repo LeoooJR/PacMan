@@ -177,7 +177,12 @@ public class PacManTest {
         Maze maze = testBoard.getMaze();
         int x = pacman.getX(); // x position at start
         int y = pacman.getY();
+        System.out.println(pacman.getCurrentTile());
+        System.out.println(STR."X = \{pacman.getX()} ;; Y = \{pacman.getY()}");
         pacman.nextMove();
+        System.out.println(pacman.getCurrentTile());
+        System.out.println(STR."X = \{pacman.getX()} ;; Y = \{pacman.getY()}");
+
         // PacMan direction is to the left
         assertEquals(pacman.getDirection(), Direction.LEFT);
         // It has moved one pixel to the left
@@ -185,15 +190,28 @@ public class PacManTest {
         assertEquals(pacman.getY(), y);
         // We ask pacman to go up
         pacman.setIntention(Direction.UP);
+        System.out.println(pacman.getCurrentTile());
         // Pacman has started at the tile center and has gone one pixel left
         // We move enough so that it reaches the next tile and tries its intention
         for(int i =0; i < 8; i++) {
-            pacman.nextMove();;
+            pacman.nextMove();
+//            assertEquals(pacman.getX(), x-1);
+//            System.out.println("Pacman X is "+pacman.getX()+" and intended x is " + (x-2-i));
+//            System.out.println(pacman.getCurrentTile());
+//            System.out.println(STR."X = \{pacman.getX()} ;; Y = \{pacman.getY()}");
+            System.out.println("Intention : " + pacman.getIntention());
+            System.out.println("Direction : " + pacman.getDirection());
+//            System.out.println();
         }
+
         // Pacman should have tried to go up, failed and kept going left
         assertEquals(pacman.getDirection(), Direction.LEFT);
-        assertEquals(pacman.getX(), x-9);
+//        System.out.println(pacman.getCurrentTile());
+//        System.out.println(STR."X = \{pacman.getX()} ;; Y = \{pacman.getY()}");
+//        System.out.println(STR."Tile is : \{pacman.getBoard().getMaze().getTile(pacman.getCurrentTile())}");
         assertEquals(pacman.getY(), y);
+        assertEquals(pacman.getX(), x-9);
+
         // The intention should be back to null
         assertNull(pacman.getIntention());
         // We ask pacman to go down
@@ -330,8 +348,15 @@ public class PacManTest {
         // It has moved one pixel to the right
         assertEquals(pacman.getX(), x-1);
         assertEquals(pacman.getY(), y);
-        // At the next move, pacman reaches the tile center and change its direction
-        pacman.nextMove();;
+        System.out.println("Pacman is at "+pacman.getCurrentTile());
+        System.out.println("Pacman is at "+pacman.getX()+" "+pacman.getY());
+        System.out.println("Direction is "+pacman.getDirection()+" and intention is "+pacman.getIntention());
+
+        // At the next move, pacman reaches the tile center and changes its direction
+        pacman.nextMove();
+        System.out.println("Pacman is at "+pacman.getCurrentTile());
+        System.out.println("Pacman is at "+pacman.getX()+" "+pacman.getY());
+        System.out.println("Direction is "+pacman.getDirection()+" and intention is "+pacman.getIntention());
         // The intention should be empty
         assertNull(pacman.getIntention());
         // PacMan direction is Up
@@ -712,9 +737,17 @@ public class PacManTest {
         }
         int x = pacman.getX();
         int y = pacman.getY();
-        assertFalse(pacman.isBlocked()); // not blocked yet
+        boolean cond = pacman.isBlocked();
+//        System.out.println("Pacman is at "+pacman.getCurrentTile());
+//        System.out.println("Pacman is at "+pacman.getX()+" "+pacman.getY());
+//        System.out.println("Direction is "+pacman.getDirection()+" and intention is "+pacman.getIntention());
+//        assertFalse(pacman.isBlocked()); // not blocked yet
         // On the next move, we are stuck because of the wall
         pacman.nextMove();;
+//
+//        System.out.println("Pacman is at "+pacman.getCurrentTile());
+//        System.out.println("Pacman is at "+pacman.getX()+" "+pacman.getY());
+//        System.out.println("Direction is "+pacman.getDirection()+" and intention is "+pacman.getIntention());
         assertEquals(pacman.getX(), x);
         assertEquals(pacman.getY(), y);
         assertTrue(pacman.isBlocked());
@@ -747,14 +780,24 @@ public class PacManTest {
         assertTrue(pacman.isBlocked());
         // Let's ask him to go left -- that should unstuck him
         pacman.setIntention(Direction.LEFT);
+
         pacman.nextMove();;
+
+        assertFalse(pacman.isBlocked());
         assertEquals(pacman.getX(), x-1);
         assertEquals(pacman.getY(), y);
-        assertFalse(pacman.isBlocked());
+//        System.out.println("Pacman is at "+pacman.getCurrentTile());
+//        System.out.println("Pacman is at "+pacman.getX()+" "+pacman.getY());
+//        System.out.println("Direction is "+pacman.getDirection()+" and intention is "+pacman.getIntention());
         // Now let's move to the left wall and get stuck again
         for(int i = 0; i < Maze.TILE_WIDTH; i++) {
             pacman.nextMove();;
+            System.out.println("x is "+x+" and pacman x is "+pacman.getX());
+            System.out.println("y is "+y+" and pacman y is "+pacman.getY());
         }
+//        System.out.println("Pacman is at "+pacman.getCurrentTile());
+//        System.out.println("Pacman is at X "+pacman.getX()+" Y"+pacman.getY());
+//        System.out.println("Direction is "+pacman.getDirection()+" and intention is "+pacman.getIntention());
         assertEquals(pacman.getX(), x-8);
         assertEquals(pacman.getY(), y);
         assertTrue(pacman.isBlocked());

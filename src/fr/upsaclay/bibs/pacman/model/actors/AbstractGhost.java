@@ -37,47 +37,42 @@ public class AbstractGhost extends AbstractActor implements Ghost {
         return target;
     }
 
-    @Override
-    public boolean isBlocked(TilePosition tile) {
-        if (penState == GhostPenState.IN) {
-            if (getBoard().getMaze().getNeighbourTile(tile, getDirection()) == Tile.GD) {
-                return false;
-            }
-        } else {
-            return super.isBlocked(tile);
-        }
+@Override
+public boolean isBlocked(TilePosition tile) {
+    if (penState == GhostPenState.IN && getBoard().getMaze().getNeighbourTile(tile, getDirection()) == Tile.GD) {
         return false;
     }
+    return super.isBlocked(tile);
+}
 
     public Direction computeDirection() {
-        double[] distArray = new double[4];
-        double min = Double.MAX_VALUE;
-        int minId = -1;
-        double x;
-        double y;
-        TilePosition nextTile = (getBoard().getMaze().getNeighbourTilePosition(getCurrentTile(), getDirection()));
+        double minDistance = Double.MAX_VALUE;
+        Direction selectedDirection = null;
+//        System.out.println("Ghost is "+ghostType);
+        TilePosition currentTile = getCurrentTile();
+//        System.out.println("Current Tile : " + currentTile);
+        Direction currentDirection = getDirection();
+//        System.out.println("Current Direction : " + currentDirection);
+        TilePosition nextTile = getBoard().getMaze().getNeighbourTilePosition(currentTile, currentDirection);
+
         for (Direction dir : Direction.values()) {
-            if (dir != getDirection().reverse()) {
+            if (dir != currentDirection.reverse()) {
                 if (tryThisWay(dir, nextTile)) {
-//                    System.out.println("Direction testée : " + dir);
-                    /**x = ((getBoard().getMaze().getNeighbourTilePosition(nextTile,dir).getCol() * getBoard().getMaze().TILE_WIDTH) + getBoard().getMaze().TITLE_CENTER_X) - ((getTarget().getCol() * getBoard().getMaze().TILE_WIDTH) + getBoard().getMaze().TITLE_CENTER_X);
-                     y = ((getBoard().getMaze().getNeighbourTilePosition(nextTile,dir).getLine() * getBoard().getMaze().TILE_HEIGHT) + getBoard().getMaze().TITLE_CENTER_Y) - ((getTarget().getLine() * getBoard().getMaze().TILE_HEIGHT) + getBoard().getMaze().TITLE_CENTER_Y);
-                     distArray[dir.ordinal()] = Math.sqrt((x*x)+(y*y));**/
-                    x = getBoard().getMaze().getNeighbourTilePosition(nextTile, dir).getCol() - getTarget().getCol();
-//                    System.out.println("X : " + x);
-                    y = getBoard().getMaze().getNeighbourTilePosition(nextTile, dir).getLine() - getTarget().getLine();
-//                    System.out.println("Y : " + y);
-                    distArray[dir.ordinal()] = Math.sqrt((x * x) + (y * y));
-                    if (distArray[dir.ordinal()] < min) {
-                        minId = dir.ordinal();
-                        min = distArray[dir.ordinal()];
+                    TilePosition neighbourTile = getBoard().getMaze().getNeighbourTilePosition(nextTile, dir);
+                    double xDistance = neighbourTile.getCol() - getTarget().getCol();
+                    double yDistance = neighbourTile.getLine() - getTarget().getLine();
+                    double distance = Math.sqrt(xDistance * xDistance + yDistance * yDistance);
+
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        selectedDirection = dir;
                     }
                 }
             }
         }
-//        System.out.println(Arrays.toString(distArray));
-        return minId >= 0 ? Direction.values()[minId] : null;
+        return selectedDirection;
     }
+
 
     @Override
     public void nextMove() {

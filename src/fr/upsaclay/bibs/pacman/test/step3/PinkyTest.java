@@ -112,11 +112,18 @@ public class PinkyTest {
         board.startActors();
         // Pacman is in 26 14
         assertEquals(pinky.getTarget(), new TilePosition(26, 10));
+        System.out.println(STR."Pacman is in \{board.getPacMan().getCurrentTile()} Pinky target is \{pinky.getTarget()}");
         // When pacman moves, pinky target moves also
         for(int i = 0; i < 8; i++) {
+
             board.nextFrame();
+            pinky.setGhostState(GhostState.CHASE);
+            TilePosition target = pinky.getTarget();
+            System.out.println(STR."Pacman is in \{board.getPacMan().getCurrentTile()} Pinky target is \{pinky.getTarget()}");
         }
         // PacMan is in 26 13
+        TilePosition target = pinky.getTarget();
+
         assertEquals(pinky.getTarget(), new TilePosition(26, 9));
         // If Pacman changes direction, pinky's target changes
         Actor pacman = board.getPacMan();
@@ -228,6 +235,7 @@ public class PinkyTest {
         // We have blocked the ghost, so it can only go in square
         while (pinky.getDirection() == Direction.LEFT) {
             board.nextFrame();
+            System.out.println(STR."Pinky is in \{pinky.getCurrentTile()} and is going \{pinky.getDirection()}");
         }
         assertEquals(pinky.getCurrentTile(), new TilePosition(14, 9));
         assertEquals(pinky.getDirection(), Direction.DOWN);
@@ -555,6 +563,8 @@ public class PinkyTest {
         Board board = Board.createBoard(GameType.CLASSIC);
         board.initialize();
         // Pinky starts inside the ghost pen it should go at tunnel speed
+        int level = board.getLevel();
+        System.out.println(STR."Level is \{level}");
         assertEquals(board.getGhost(GhostType.PINKY).getSpeed(), board.getTunnelGhostSpeed());
         board.initializeNewLevel(4);
         assertEquals(board.getGhost(GhostType.PINKY).getSpeed(), board.getTunnelGhostSpeed());

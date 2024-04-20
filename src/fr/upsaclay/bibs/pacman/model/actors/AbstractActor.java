@@ -7,7 +7,7 @@ import fr.upsaclay.bibs.pacman.model.maze.Maze;
 import fr.upsaclay.bibs.pacman.model.maze.Tile;
 import fr.upsaclay.bibs.pacman.model.maze.TilePosition;
 
-public class AbstractActor implements Actor{
+public class AbstractActor implements Actor {
 
     private ActorType type;
 
@@ -25,7 +25,7 @@ public class AbstractActor implements Actor{
 
     private int stopTime;
 
-    AbstractActor(ActorType type, Board board){
+    AbstractActor(ActorType type, Board board) {
         this.type = type;
         this.board = board;
     }
@@ -58,7 +58,7 @@ public class AbstractActor implements Actor{
 
     @Override
     public TilePosition getCurrentTile() {
-        return board.getMaze().getTilePosition(getX(),getY());
+        return board.getMaze().getTilePosition(getX(), getY());
     }
 
     @Override
@@ -77,88 +77,97 @@ public class AbstractActor implements Actor{
     }
 
     @Override
-    public void setIntention(Direction direction) {
-        this.intention = direction;
-    }
-
-    @Override
     public Direction getIntention() {
         return intention;
     }
 
     @Override
-    public boolean isBlocked() {
-        return getBoard().getMaze().getNeighbourTile(this.getCurrentTile(),direction).isWall();
-        /**if(x + direction.getDx() >= getBoard().getMaze().getPixelWidth())
-            return board.getMaze().getTile(getBoard().getMaze().getTilePosition(0,y + direction.getDy())).isWall();
-        else if(x + direction.getDx() < 0){
-            return board.getMaze().getTile(getBoard().getMaze().getTilePosition(board.getMaze().getPixelWidth() - 1,y + direction.getDy())).isWall();
-        }
-        else if(y + direction.getDy() >= getBoard().getMaze().getPixelHeight()){
-            return board.getMaze().getTile(getBoard().getMaze().getTilePosition(x + direction.getDx(),0)).isWall();
-        }
-        else if(y + direction.getDy() < 0){
-            return board.getMaze().getTile(getBoard().getMaze().getTilePosition(x + direction.getDx(),board.getMaze().getPixelHeight() - 1)).isWall();
-        }
-        else {
-            System.out.println(board.getMaze().getTile(getBoard().getMaze().getTilePosition(x + direction.getDx(),y + direction.getDy())));
-            return board.getMaze().getTile(getBoard().getMaze().getTilePosition(x + direction.getDx(),y + direction.getDy())).isWall();
-        }**/
+    public void setIntention(Direction direction) {
+        this.intention = direction;
     }
 
-    public boolean isBlocked(TilePosition tile){
-        return board.getMaze().getNeighbourTile(tile,direction).isWall();
+    @Override
+    public boolean isBlocked() {
+        Tile neighbourTile = getBoard().getMaze().getNeighbourTile(this.getCurrentTile(), direction);
+
+        // If intention is not null, check the tile in the intended direction
+        if (intention != null && neighbourTile.isWall()) {
+            Tile neighbourIntent = getBoard().getMaze().getNeighbourTile(this.getCurrentTile(), intention);
+            if (!neighbourIntent.isWall()) {
+                direction = intention;
+            }
+            return neighbourTile.isWall() && neighbourIntent.isWall();
+        }
+
+    return neighbourTile.isWall();
     }
+
+    public boolean isBlocked(TilePosition tile) {
+        return board.getMaze().getNeighbourTile(tile, direction).isWall();
+    }
+
 
     public boolean isCentered() {
-        return (getX() == ((getCurrentTile().getCol() * Maze.TILE_WIDTH) + Maze.TITLE_CENTER_X) && getY() == ((getCurrentTile().getLine() * Maze.TILE_HEIGHT) + Maze.TITLE_CENTER_Y));
+        TilePosition currentTile = getCurrentTile();
+        int centerX = currentTile.getCol() * Maze.TILE_WIDTH + Maze.TITLE_CENTER_X;
+        int centerY = currentTile.getLine() * Maze.TILE_HEIGHT + Maze.TITLE_CENTER_Y;
+        int posX = getX();
+        int posY = getY();
+        return posX == centerX && posY == centerY;
     }
 
-    public boolean isBeforeCenter(){
-        switch(direction){
-            case UP: return (y > ((getCurrentTile().getLine() * Maze.TILE_HEIGHT) + Maze.TITLE_CENTER_Y));
-            case DOWN: return (y < ((getCurrentTile().getLine() * Maze.TILE_HEIGHT) + Maze.TITLE_CENTER_Y));
-            case RIGHT: return  (x < ((getCurrentTile().getCol() * Maze.TILE_WIDTH) + Maze.TITLE_CENTER_X));
-            case LEFT: return (x > ((getCurrentTile().getCol() * Maze.TILE_WIDTH) + Maze.TITLE_CENTER_X));
+    public boolean isBeforeCenter() {
+        switch (direction) {
+            case UP:
+                return (y > ((getCurrentTile().getLine() * Maze.TILE_HEIGHT) + Maze.TITLE_CENTER_Y));
+            case DOWN:
+                return (y < ((getCurrentTile().getLine() * Maze.TILE_HEIGHT) + Maze.TITLE_CENTER_Y));
+            case RIGHT:
+                return (x < ((getCurrentTile().getCol() * Maze.TILE_WIDTH) + Maze.TITLE_CENTER_X));
+            case LEFT:
+                return (x > ((getCurrentTile().getCol() * Maze.TILE_WIDTH) + Maze.TITLE_CENTER_X));
         }
         return false;
     }
-    public boolean tryThisWay(Direction direction, TilePosition tile){
+
+    public boolean tryThisWay(Direction direction, TilePosition tile) {
         Direction previousDirection = getDirection();
         goThisWay(direction);
         boolean wayBool = !isBlocked(tile);
         goThisWay(previousDirection);
         return wayBool;
     }
-    public void goThisWay(Direction intention){
+
+    public void goThisWay(Direction intention) {
         direction = intention;
     }
+
     @Override
     public void nextMove() {
-        if(x + (direction.getDx()*movementSpeed) >= board.getMaze().getPixelWidth())
-            setPosition(0,(y + (direction.getDy()*movementSpeed)));
-        else if(x + (direction.getDx()*movementSpeed) < 0){
-            setPosition(board.getMaze().getPixelWidth()-1,(y + (direction.getDy()*movementSpeed)));
+        double newX = x + (direction.getDx() * movementSpeed);
+        double newY = y + (direction.getDy() * movementSpeed);
+
+        if (newX >= board.getMaze().getPixelWidth()) {
+            newX = 0;
+        } else if (newX < 0) {
+            newX = board.getMaze().getPixelWidth() - 1;
         }
-        else if((y + (direction.getDy()*movementSpeed)) >= board.getMaze().getPixelHeight()){
-            setPosition(x + (direction.getDx()*movementSpeed), 0);
+
+        if (newY >= board.getMaze().getPixelHeight()) {
+            newY = 0;
+        } else if (newY < 0) {
+            newY = board.getMaze().getPixelHeight() - 1;
         }
-        else if((y + (direction.getDy()*movementSpeed)) < 0){
-            setPosition(x + (direction.getDx()*movementSpeed), board.getMaze().getPixelHeight() - 1);
-        }
-        else {
-            setPosition(x + (direction.getDx()*movementSpeed), (y + (direction.getDy()*movementSpeed)));
-        }
-//        System.out.println("X " + x + " Y " + y);
-//        System.out.println(getCurrentTile());
+//        System.out.println("New X : " + newX + " New Y : " + newY);
+//        System.out.println(STR."Tile is : \{board.getMaze().getTile(board.getMaze().getTilePosition((int)newX,( int)(newY)))}");
+        setPosition(newX, newY);
     }
 
     @Override
     public void nextFrame() {
-        if(stopTime == 0){
+        if (stopTime == 0) {
             nextMove();
-        }
-        else if(stopTime > 0){
+        } else if (stopTime > 0) {
             stopTime--;
         }
     }
@@ -166,13 +175,13 @@ public class AbstractActor implements Actor{
     //Step 2
 
     @Override
-    public void setSpeed(double speed) {
-        movementSpeed = speed;
+    public double getSpeed() {
+        return movementSpeed;
     }
 
     @Override
-    public double getSpeed() {
-        return movementSpeed;
+    public void setSpeed(double speed) {
+        movementSpeed = speed;
     }
 
     @Override

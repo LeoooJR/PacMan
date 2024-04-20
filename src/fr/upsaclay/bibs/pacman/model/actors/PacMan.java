@@ -45,19 +45,36 @@ public class PacMan extends AbstractActor{
 
     @Override
     public void nextMove(){
-//        System.out.println("PacMan Move");
+//        System.out.println("PacMan Move initiated");
+        // Check if there is an intention to reverse the direction
         if(getIntention() == getDirection().reverse()) {
-//            System.out.println("reverse");
+//            System.out.println("Intention is to reverse direction");
             goThisWay(getIntention());
             setIntention(null);
+//            System.out.println("Direction reversed and intention set to null");
         }
-        if((isCentered() ? tryThisWay() : true)){
+        // This has to e done here because if not pacman center is not calculated correctly
+        if(!isBlocked()) {
             super.nextMove();
+
+
+            // Check if PacMan is centered to determine movement or direction change
+            if (isCentered()) {
+            System.out.println("PacMan is centered");
+
+                // Attempt to move in the intended direction when centered
+                if (tryThisWay()) {
+//                System.out.println("PacMan is trying a new direction");
+                }
+                setIntention(null);
+            } else {
+//            System.out.println("PacMan is not centered, continuing in the current direction");
+            }
         }
-        if(isCentered()){
-            tryThisWay();
-        }
+
+
     }
+
     /**
     @Override
     public void nextFrame() {

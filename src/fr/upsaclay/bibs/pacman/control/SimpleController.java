@@ -42,10 +42,11 @@ public class SimpleController implements Controller{
 
     @Override
     public void receiveAction(GameAction action) throws PacManException {
+
         switch(action){
             case RIGHT, LEFT, UP, DOWN:
                 if(view.getViewLayout() == PacManLayout.GAME_ON){
-//                    System.out.println("Event : " + Direction.valueOf(String.valueOf(action)));
+                    System.out.println("Event : " + Direction.valueOf(String.valueOf(action)));
                     board.getPacMan().setIntention(Direction.valueOf(String.valueOf(action)));
                 }
                 else {
@@ -53,6 +54,7 @@ public class SimpleController implements Controller{
                 }
                 break;
             case START:
+                System.out.println("Start");
                 if(view.getViewLayout() == PacManLayout.INIT){
                     view.setLayout(PacManLayout.GAME_ON);
                     board.initialize();
@@ -67,14 +69,17 @@ public class SimpleController implements Controller{
                 }
                 break;
             case PAUSE:
+                System.out.println("Pause");
                 if(view.getViewLayout() == PacManLayout.GAME_ON){
                     view.setLayout(PacManLayout.PAUSE);
+//                    System.out.println("Pause");
                 }
                 else {
                     throw new ForbiddenActionException(action);
                 }
                 break;
             case RESUME:
+                System.out.println("Resume");
                 if(view.getViewLayout() == PacManLayout.PAUSE) {
                     view.setLayout(PacManLayout.GAME_ON);
                 }

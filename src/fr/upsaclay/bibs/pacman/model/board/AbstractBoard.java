@@ -18,6 +18,7 @@ public class AbstractBoard implements Board {
 
     private final GameType game;
 
+
     private BoardState gameState;
 
     private boolean isPlaying;
@@ -52,12 +53,12 @@ public class AbstractBoard implements Board {
     private int level;
 
 
-
     AbstractBoard(GameType game) {
         this.game = game;
         this.gameState = BoardState.INITIAL;
         this.isPlaying = false;
         this.disabledGhosts = new ArrayList<>();
+
     }
 
     @Override
@@ -85,11 +86,11 @@ public class AbstractBoard implements Board {
             if (!disabledGhosts.contains(GhostType.PINKY)) {
                 ghosts.add(new Pinky(this));
             }
-            //Inky
+//            //Inky
             if (!disabledGhosts.contains(GhostType.INKY)) {
                 ghosts.add(new Inky(this));
             }
-            //Clyde
+//            //Clyde
             if (!disabledGhosts.contains(GhostType.CLYDE)) {
                 ghosts.add(new Clyde(this));
             }
@@ -127,75 +128,122 @@ public class AbstractBoard implements Board {
 
     @Override
     public void nextFrame() {
-        //PacMan turn
+        updatePacmanState();
+        checkLevelCompletion();
+        updateGhostsState();
+        updateGhostTimers();
+    }
+
+    private void updatePacmanState() {
         pacman.nextFrame();
-        switch (maze.getTile(pacman.getCurrentTile())) {
+        Tile currentTile = maze.getTile(pacman.getCurrentTile());
+        processPacmanTile(currentTile);
+    }
+
+    private void processPacmanTile(Tile tile) {
+        switch (tile) {
             case SD, ND:
-                score += 10;
+                increaseScore(10);
                 pacman.setStopTime(1);
-                maze.setTile(pacman.getCurrentTile(), getMaze().getTile(pacman.getCurrentTile()) == Tile.ND ? Tile.NT : Tile.EE);
+                maze.setTile(pacman.getCurrentTile(), tile == Tile.ND ? Tile.NT : Tile.EE);
                 break;
             case BD:
-                score += 50;
+                increaseScore(50);
                 pacman.setStopTime(3);
                 maze.setTile(pacman.getCurrentTile(), Tile.EE);
-                this.ghostPreviousState = ghostState;
-                ghostState = GhostState.FRIGHTENED;
-                this.frightTimer = frightTime[level - 1];
+                triggerFrightenedMode();
                 break;
         }
+    }
+
+    private void increaseScore(int points) {
+        score += points;
+    }
+
+    private void triggerFrightenedMode() {
+        ghostPreviousState = ghostState;
+        ghostState = GhostState.FRIGHTENED;
+        frightTimer = frightTime[level - 1];
+    }
+
+    private void checkLevelCompletion() {
         if (maze.getNumberOfDots() == 0) {
             gameState = BoardState.LEVEL_OVER;
         }
-        //Ghost turn
-        for (Ghost ghost : ghosts) {
-            // TODO: !Important - Ask leo why this is here and if it is necessary
-//            if (ghostState != ghost.getGhostState()) {
-//                ghost.setGhostState(ghostState);
-//                ghost.reverseDirectionIntention();
-//            }
-            ghost.nextFrame();
-            if (ghost.getCurrentTile().equals(pacman.getCurrentTile())) {
-                if (pacman.getLifePoint() > 0) {
-                    gameState = BoardState.LIFE_OVER;
-                } else gameState = BoardState.GAME_OVER;
+    }
 
-            }
-            switch (maze.getTile(ghost.getCurrentTile())) {
-                case SL:
-                    ghost.setSpeed(.5);
-                    break;
-                default:
-                    if (ghost.getSpeed() == 0.5) {
-                        ghost.setSpeed(1);
-                    }
-            }
-        }
-        if (!disable && ghostState != GhostState.FRIGHTENED) {
-            if (chaseTime[chaseCtr] != -1) {
-                switch (ghostState) {
-                    case SCATTER:
-                        scatterTime[scatterCtr]--;
-                        if (scatterTime[scatterCtr] == 0) {
-                            ghostState = GhostState.CHASE;
-                            scatterCtr++;
-                        }
-                        break;
-                    case CHASE:
-                        chaseTime[chaseCtr]--;
-                        if (chaseTime[chaseCtr] == 0) {
-                            if (scatterCtr < 3) {
-                                ghostState = GhostState.SCATTER;
-                            }
-                            chaseCtr++;
-                        }
+    private void updateGhostsState() {
+
+
+
+            for (Ghost ghost : ghosts) {
+                if (ghostState != ghost.getGhostState() && !disable) {
+                    ghost.setGhostState(ghostState);
+                    ghost.reverseDirectionIntention();
                 }
+                updateGhost(ghost);
             }
+
+    }
+
+    private void updateGhost(Ghost ghost) {
+        ghost.nextFrame();
+        checkGhostCollision(ghost);
+        adjustGhostSpeed(ghost);
+    }
+
+    private void checkGhostCollision(Ghost ghost) {
+        if (ghost.getCurrentTile().equals(pacman.getCurrentTile())) {
+            gameState = pacman.getLifePoint() > 0 ? BoardState.LIFE_OVER : BoardState.GAME_OVER;
+        }
+    }
+
+    private void adjustGhostSpeed(Ghost ghost) {
+        Tile ghostTile = maze.getTile(ghost.getCurrentTile());
+        if (ghostTile == Tile.SL) {
+            ghost.setSpeed(0.5);
+        } else if (ghost.getSpeed() == 0.5) {
+            ghost.setSpeed(1);
+        }
+    }
+
+    private void updateGhostTimers() {
+        if (!disable && ghostState != GhostState.FRIGHTENED) {
+            updateModeTimers();
         } else {
-            frightTimer--;
-            if (frightTimer == 0) {
-                ghostState = ghostPreviousState;
-            }
+            decrementFrightTimer();
+        }
+    }
+
+    private void updateModeTimers() {
+        if(!disable) {
+        if (ghostState == GhostState.SCATTER && decrementTimer(scatterTime, scatterCtr)) {
+            transitionToChaseMode();
+        } else if (ghostState == GhostState.CHASE && decrementTimer(chaseTime, chaseCtr)) {
+            maybeTransitionToScatterMode();
+        }}
+    }
+
+    private boolean decrementTimer(int[] times, int index) {
+        return --times[index] == 0;
+    }
+
+    private void transitionToChaseMode() {
+        ghostState = GhostState.CHASE;
+        scatterCtr++;
+    }
+
+    private void maybeTransitionToScatterMode() {
+        if (scatterCtr < 3) {
+            ghostState = GhostState.SCATTER;
+        }
+        chaseCtr++;
+    }
+
+    private void decrementFrightTimer() {
+        frightTimer--;
+        if (frightTimer == 0) {
+            ghostState = ghostPreviousState;
         }
     }
 
@@ -282,7 +330,16 @@ public class AbstractBoard implements Board {
 
     @Override
     public boolean hasGhost(GhostType ghostType) {
-        return !ghosts.isEmpty() ? ghosts.get(ghostType.ordinal()).getGhostType() == ghostType : false;
+        if (ghosts.isEmpty()) {
+            return false;
+        } else {
+            for (Ghost ghost : ghosts) {
+                if (ghost.getGhostType() == ghostType) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override
@@ -363,6 +420,7 @@ public class AbstractBoard implements Board {
 
     @Override
     public double getTunnelGhostSpeed() {
+//        40% of the level speed
         return 0;
     }
 

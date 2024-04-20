@@ -117,6 +117,8 @@ public class PinkyTest {
             board.nextFrame();
         }
         // PacMan is in 26 13
+        TilePosition target = pinky.getTarget();
+
         assertEquals(pinky.getTarget(), new TilePosition(26, 9));
         // If Pacman changes direction, pinky's target changes
         Actor pacman = board.getPacMan();

@@ -1,10 +1,12 @@
 package fr.upsaclay.bibs.pacman.view;
 
+import fr.upsaclay.bibs.pacman.GameType;
 import fr.upsaclay.bibs.pacman.control.Controller;
 import fr.upsaclay.bibs.pacman.control.GameAction;
 import fr.upsaclay.bibs.pacman.model.actors.Actor;
 import fr.upsaclay.bibs.pacman.model.actors.Ghost;
 import fr.upsaclay.bibs.pacman.model.board.Board;
+import fr.upsaclay.bibs.pacman.model.board.BoardState;
 import fr.upsaclay.bibs.pacman.model.maze.Maze;
 
 import javax.imageio.ImageIO;
@@ -21,47 +23,48 @@ public class PacManGameView extends JFrame implements PacManView {
 
     public static final int WIDTH = 720;
 
-    public static  final int HEIGHT = 1000;
-
-    private Controller controller;
-
-    private PacManLayout layout;
-
-    private Board board;
-
+    public static final int HEIGHT = 1000;
     JPanel initPanel;
     StartKeyListener startListener;
-
     GamePanel gamePanel;
-
     JPanel gameHeaderPanel;
-
     PlayKeyListener playListener;
-
-    JPanel pausePanel;
-
+    PausePanel pausePanel;
     JPanel levelOverPanel;
-
     JPanel lifeOverPanel;
-
     Timer timer;
-
     JLabel score;
+    private Controller controller;
+    private PacManLayout layout;
+    private Board board;
+    private CardLayout cardLayout;
 
-    public PacManGameView(String name, int width, int height){
+    private JPanel cards;
+
+    public PacManGameView(String name, int width, int height) {
         super(name);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setResizable(false);
         this.setFocusable(true);
         setTitle("PacMan");
-        setSize(new Dimension(width,height));
+        setSize(new Dimension(width, height));
+
+
+        cardLayout = new CardLayout();
+        cards = new JPanel(cardLayout);
+        add(cards);
 
         initPanel = new JPanel();
         initPanel.setLayout(new BorderLayout());
 
-        timer = new Timer(17,null);
+        timer = new Timer(17, null);
         layout = PacManLayout.INIT;
+        cards.add(initPanel, "INIT");
+    }
 
+    public static void main(String[] args) {
+        PacManView view = new PacManGameView("PacMan", 720, 1000);
+        view.initialize();
     }
 
     @Override
@@ -83,7 +86,7 @@ public class PacManGameView extends JFrame implements PacManView {
         JLabel header = new JLabel();
         header.setText("TOUCH TO START");
         header.setHorizontalAlignment(SwingConstants.CENTER);
-        header.setFont(new Font("Futura",Font.BOLD,50));
+        header.setFont(new Font("Futura", Font.BOLD, 50));
         header.setForeground(Color.ORANGE);
         initPanel.add(header, BorderLayout.CENTER);
 
@@ -91,10 +94,10 @@ public class PacManGameView extends JFrame implements PacManView {
         //Image Label GIF
         ImageIcon imgGif = new ImageIcon(Objects.requireNonNull(this.getClass().getResource("giphy720.gif")));
         JLabel imgLabel = new JLabel();
-        imgLabel.setBounds(0,600,1000,280);
+        imgLabel.setBounds(0, 600, 1000, 280);
         imgLabel.setIcon(imgGif);
         imgLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        initPanel.add(imgLabel,BorderLayout.SOUTH);
+        initPanel.add(imgLabel, BorderLayout.SOUTH);
 
         //Header Image PacMan
         BufferedImage imgPacMan;
@@ -103,41 +106,50 @@ public class PacManGameView extends JFrame implements PacManView {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        Image imgPacManResized = imgPacMan.getScaledInstance(720,300,Image.SCALE_DEFAULT);
+        Image imgPacManResized = imgPacMan.getScaledInstance(720, 300, Image.SCALE_DEFAULT);
         //ImageIcon imgPacMan = new ImageIcon(Objects.requireNonNull(this.getClass().getResource("Pac-Man_Logo.svg.png")));
         ImageIcon iconPacMan = new ImageIcon(imgPacManResized);
         JLabel imgPacManLabel = new JLabel();
         imgPacManLabel.setIcon(iconPacMan);
-        initPanel.add(imgPacManLabel,BorderLayout.NORTH);
+        initPanel.add(imgPacManLabel, BorderLayout.NORTH);
 
         //Listener to launch the game
-        startListener = new StartKeyListener(controller,this);
+        startListener = new StartKeyListener(controller, this);
 
         //Game Panel
         gamePanel = new GamePanel();
         gamePanel.setBackground(Color.BLACK);
 
+        cards.add(gamePanel, "GAME");
+
         //Header Game Panel
         gameHeaderPanel = new JPanel();
-        gameHeaderPanel.setLayout(new BoxLayout(gameHeaderPanel,BoxLayout.Y_AXIS));
+        gameHeaderPanel.setLayout(new BoxLayout(gameHeaderPanel, BoxLayout.Y_AXIS));
         gameHeaderPanel.setBackground(Color.BLACK);
-        gameHeaderPanel.setPreferredSize(new Dimension(720,95));
+        gameHeaderPanel.setPreferredSize(new Dimension(720, 95));
 
         JLabel gameHeader = new JLabel();
         gameHeader.setText("HIGH SCORE");
-        gameHeader.setFont(new Font("Futura",Font.BOLD,33));
+        gameHeader.setFont(new Font("Futura", Font.BOLD, 33));
         gameHeader.setForeground(Color.WHITE);
         gameHeader.setAlignmentX(Component.CENTER_ALIGNMENT);
         gameHeaderPanel.add(gameHeader);
 
-        gamePanel.add(gameHeaderPanel,BorderLayout.NORTH);
+        gamePanel.add(gameHeaderPanel, BorderLayout.NORTH);
 
         score = new JLabel();
         score.setText("0");
-        score.setFont(new Font("Futura",Font.BOLD,33));
+        score.setFont(new Font("Futura", Font.BOLD, 33));
         score.setForeground(Color.WHITE);
         score.setBackground(Color.BLACK);
         score.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JLabel st = new JLabel("State : ");
+        st.setFont(new Font("Futura", Font.BOLD, 33));
+        st.setForeground(Color.WHITE);
+        st.setBackground(Color.BLACK);
+        st.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        gameHeaderPanel.add(st);
 
         //Timer
         timer.addActionListener(new ButtonListener(controller, GameAction.NEXT_FRAME));
@@ -146,10 +158,9 @@ public class PacManGameView extends JFrame implements PacManView {
         playListener = new PlayKeyListener(controller);
 
         //Pause Panel
-        pausePanel= new JPanel();
-        JLabel textLabel = new JLabel();
-        textLabel.setText("Pause");
-        pausePanel.add(textLabel);
+        pausePanel = new PausePanel();
+        cards.add(pausePanel, "PAUSE");
+
 
         //Level Over Panel
         levelOverPanel = new JPanel();
@@ -157,9 +168,10 @@ public class PacManGameView extends JFrame implements PacManView {
 
         JLabel winLevelMessage = new JLabel();
         winLevelMessage.setText("You win this level !");
-        winLevelMessage.setFont(new Font("Futura",Font.BOLD,33));
-        levelOverPanel.add(winLevelMessage,BorderLayout.CENTER);
+        winLevelMessage.setFont(new Font("Futura", Font.BOLD, 33));
+        levelOverPanel.add(winLevelMessage, BorderLayout.CENTER);
 
+        cards.add(levelOverPanel, "LEVEL_OVER");
 
         //Life Over Panel
         lifeOverPanel = new JPanel();
@@ -167,95 +179,90 @@ public class PacManGameView extends JFrame implements PacManView {
 
         JLabel looseLevelMessage = new JLabel();
         looseLevelMessage.setText("You loose !");
-        looseLevelMessage.setFont(new Font("Futura",Font.BOLD,33));
+        looseLevelMessage.setFont(new Font("Futura", Font.BOLD, 33));
         lifeOverPanel.add(looseLevelMessage);
 
+
+        BufferedImage imgGameOver;
+        try {
+            imgGameOver = ImageIO.read(new File("resources/img/gameover.png"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        Image imgGameOverResized = imgGameOver.getScaledInstance(720, 300, Image.SCALE_DEFAULT);
+        //ImageIcon imgPacMan = new ImageIcon(Objects.requireNonNull(this.getClass().getResource("Pac-Man_Logo.svg.png")));
+        ImageIcon iconGameOver = new ImageIcon(imgGameOverResized);
+        JLabel imgGameOverLabel = new JLabel();
+        imgGameOverLabel.setIcon(iconGameOver);
+        lifeOverPanel.add(imgGameOverLabel);
         setLocationRelativeTo(null);
         setVisible(true);
-
-
+        cards.add(lifeOverPanel, "LIFE_OVER");
     }
 
     @Override
     public void setLayout(PacManLayout layout) {
-        switch (layout){
-            case PacManLayout.INIT:
-                this.layout = PacManLayout.INIT;
-                add(initPanel,BorderLayout.CENTER);
-                initPanel.setVisible(true);
-                gamePanel.setVisible(false);
-                pausePanel.setVisible(false);
+        switch (layout) {
+            case INIT:
+                System.out.println("INIT");
                 removeKeyListener(playListener);
                 addKeyListener(startListener);
                 requestFocus();
+                cardLayout.show(cards, "INIT");
                 break;
             case GAME_ON:
+
                 this.layout = PacManLayout.GAME_ON;
-                add(gamePanel,BorderLayout.CENTER);
-                initPanel.setVisible(false);
-                lifeOverPanel.setVisible(false);
-                levelOverPanel.setVisible(false);
-                gamePanel.setVisible(true);
-                pausePanel.setVisible(false);
-                removeKeyListener(startListener);
-                addKeyListener(playListener);
+                cardLayout.show(cards, "GAME");
                 gameHeaderPanel.add(score);
                 requestFocus();
                 timer.start();
+                removeKeyListener(startListener);
+                addKeyListener(playListener);
                 break;
             case PAUSE:
-                this.layout = PacManLayout.PAUSE;
-                gamePanel.setVisible(false);
-                pausePanel.setVisible(true);
+                cardLayout.show(cards, "PAUSE");
+                timer.stop();
                 removeKeyListener(playListener);
                 addKeyListener(startListener);
                 requestFocus();
-                timer.stop();
                 break;
             case LEVEL_OVER:
-                this.layout = PacManLayout.LEVEL_OVER;
-                add(levelOverPanel,BorderLayout.CENTER);
-                gamePanel.setVisible(false);
-                levelOverPanel.setVisible(true);
-                removeKeyListener(playListener);
-                timer.stop();
-                addKeyListener(startListener);
-                requestFocus();
+                cardLayout.show(cards, "LEVEL_OVER");
                 break;
             case LIFE_OVER:
-                this.layout = PacManLayout.LIFE_OVER;
-                add(lifeOverPanel,BorderLayout.CENTER);
-                gamePanel.setVisible(false);
-                lifeOverPanel.setVisible(true);
-                removeKeyListener(playListener);
+                cardLayout.show(cards, "LIFE_OVER");
                 timer.stop();
-                addKeyListener(startListener);
-                requestFocus();
+                removeKeyListener(playListener);
+                removeKeyListener(startListener);
+                break;
         }
+
     }
 
-    public PacManLayout getViewLayout(){
+    public PacManLayout getViewLayout() {
         return this.layout;
     }
 
-
-    public void setMaze(Maze maze){
+    public void setMaze(Maze maze) {
         gamePanel.setMaze(maze);
     }
 
-    public void setPacMan(Actor agent){gamePanel.setPacman(agent);}
+    public void setPacMan(Actor agent) {
+        gamePanel.setPacman(agent);
+    }
 
-    public void setGhosts(java.util.List<Ghost> ghosts){gamePanel.setGhostList(ghosts);}
+    public void setGhosts(java.util.List<Ghost> ghosts) {
+        gamePanel.setGhostList(ghosts);
+    }
 
     @Override
     public void update() {
         repaint();
         score.setText(String.valueOf(board.getScore()));
-        requestFocus();
-    }
+        BoardState state = board.getBoardState();
+        GameType type = board.getGameType();
 
-    public static void main(String[] args){
-        PacManView view = new PacManGameView("PacMan",720,1000);
-        view.initialize();
+        requestFocus();
     }
 }
