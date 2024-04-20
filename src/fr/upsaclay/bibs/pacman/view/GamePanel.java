@@ -3,6 +3,7 @@ package fr.upsaclay.bibs.pacman.view;
 import fr.upsaclay.bibs.pacman.model.Direction;
 import fr.upsaclay.bibs.pacman.model.actors.Actor;
 import fr.upsaclay.bibs.pacman.model.actors.Ghost;
+import fr.upsaclay.bibs.pacman.model.actors.GhostState;
 import fr.upsaclay.bibs.pacman.model.actors.GhostType;
 import fr.upsaclay.bibs.pacman.model.maze.Maze;
 import fr.upsaclay.bibs.pacman.model.maze.PacManMaze;
@@ -44,18 +45,23 @@ public class GamePanel extends JPanel {
     private Image inkyImage = loadImage("resources/img/inky.png");
     private Image clydeImage = loadImage("resources/img/clyde.png");
 
-   public GamePanel() {
-    super();
-    for (GhostType type : GhostType.values()) {
-        Map<Direction, Image> imagesByDirection = new HashMap<>();
-        for (Direction direction : Direction.values()) {
-            String imagePath = STR."resources/img/\{type.name().toLowerCase()}_\{direction.name().toLowerCase()}.png";
-            imagesByDirection.put(direction, loadImage(imagePath));
-        }
-        ghostImages.put(type, imagesByDirection);
-    }
-}
+    private Image frightenedImage = loadImage("resources/img/inky.png");
+    private Image flashingFrightenedImage = loadImage("resources/img/vulnerable_flash.gif");
+
     private Map<GhostType, Map<Direction, Image>> ghostImages = new HashMap<>();
+
+    public GamePanel() {
+        super();
+        for (GhostType type : GhostType.values()) {
+            Map<Direction, Image> imagesByDirection = new HashMap<>();
+            for (Direction direction : Direction.values()) {
+                String imagePath = STR."resources/img/\{type.name().toLowerCase()}_\{direction.name().toLowerCase()}.png";
+                imagesByDirection.put(direction, loadImage(imagePath));
+            }
+            ghostImages.put(type, imagesByDirection);
+        }
+    }
+
     public void setPacman(Actor agent) {
         this.pacman = agent;
     }
@@ -130,8 +136,10 @@ public class GamePanel extends JPanel {
 
     public void paintGhost(Graphics graphics, int offset_x, int offset_y) {
         for (Ghost ghost : ghostList) {
+            Image ghostImage = ghost.getGhostState() == GhostState.FRIGHTENED ? frightenedImage
+                    : ghost.getGhostState() == GhostState.FRIGHTENED_END ? flashingFrightenedImage
+                    : ghostImages.get(ghost.getGhostType()).get(ghost.getDirection());
 
-            Image ghostImage = ghostImages.get(ghost.getGhostType()).get(ghost.getDirection());
             graphics.drawImage(ghostImage,
                     (offset_x + (ghost.getCurrentTile().getCol() * Maze.TILE_WIDTH) * 3),
                     (offset_y + ((ghost.getCurrentTile().getLine() * Maze.TILE_HEIGHT) * 3)),

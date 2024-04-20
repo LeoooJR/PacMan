@@ -72,28 +72,17 @@ public class AbstractBoard implements Board {
             level = 1;
             score = 0;
             scatterTime = new int[]{7 * 60, 7 * 60, 5 * 60, 5 * 60};
-            chaseTime = new int[]{20 * 60, 20 * 60, 20 * 60, -1};
-            frightTime = new int[]{6, 5, 4, 3, 2, 5, 2, 2, 1, 5, 2, 1, 1, 3, 1, 1, -1, 1, -1, -1, -1};
+            chaseTime = new int[]{20 * 60, 20 * 60, 20 * 60, Integer.MAX_VALUE};
+            frightTime = new int[]{6, 3, 4, 3, 2, 5, 2, 2, 1, 5, 2, 1, 1, 3, 1, 1, -1, 1, -1, -1, -1};
             //Load PacMan
             setPacman(new PacMan(this));
+            setNumberOfLives(getNumberOfLives() - 1);
             ghosts = new ArrayList<>();
+            // Test Board can't have ghosts
+            if (game == GameType.CLASSIC) {
+                initializeGhosts();
+            }
 
-            //Blinky
-            if (!disabledGhosts.contains(GhostType.BLINKY)) {
-                ghosts.add(new Blinky(this));
-            }
-            //Pinky
-            if (!disabledGhosts.contains(GhostType.PINKY)) {
-                ghosts.add(new Pinky(this));
-            }
-//            //Inky
-            if (!disabledGhosts.contains(GhostType.INKY)) {
-                ghosts.add(new Inky(this));
-            }
-//            //Clyde
-            if (!disabledGhosts.contains(GhostType.CLYDE)) {
-                ghosts.add(new Clyde(this));
-            }
             isPlaying = true;
         } else {
             initializeNewLife();
@@ -103,9 +92,30 @@ public class AbstractBoard implements Board {
         ghostState = GhostState.SCATTER;
     }
 
+    private void initializeGhosts() {
+        //Blinky
+        if (!disabledGhosts.contains(GhostType.BLINKY)) {
+            ghosts.add(new Blinky(this));
+        }
+        //Pinky
+        if (!disabledGhosts.contains(GhostType.PINKY)) {
+            ghosts.add(new Pinky(this));
+        }
+//            //Inky
+        if (!disabledGhosts.contains(GhostType.INKY)) {
+            ghosts.add(new Inky(this));
+        }
+//            //Clyde
+        if (!disabledGhosts.contains(GhostType.CLYDE)) {
+            ghosts.add(new Clyde(this));
+        }
+
+    }
+
     @Override
     public void startActors() {
         pacman.start();
+        setBoardState(BoardState.STARTED);
     }
 
     @Override
@@ -131,7 +141,48 @@ public class AbstractBoard implements Board {
         updatePacmanState();
         checkLevelCompletion();
         updateGhostsState();
-        updateGhostTimers();
+//        updateGhostTimers();
+        if (!disable) {
+            updateStateTimers();
+        }
+    }
+
+    private void updateStateTimers() {
+        if (ghostState != GhostState.FRIGHTENED && ghostState != GhostState.FRIGHTENED_END) {
+            if (ghostState == GhostState.SCATTER) {
+                if (--scatterTime[scatterCtr] == 0) {
+                    transitionToChaseMode();
+                    if (scatterCtr < scatterTime.length - 1) {
+                        scatterCtr++;
+                    }
+                }
+            } else if (ghostState == GhostState.CHASE) {
+                if (chaseTime[chaseCtr] != Integer.MAX_VALUE && --chaseTime[chaseCtr] == 0) {
+                    transitionToScatterMode();
+                    if (chaseCtr < chaseTime.length - 1) {
+                        chaseCtr++;
+                    }
+                }
+            }
+        }else{
+            decrementFrightTimer();
+        }
+    }
+
+    private void transitionToChaseMode() {
+        ghostState = GhostState.CHASE;
+        for (Ghost ghost : ghosts) {
+            ghost.setGhostState(GhostState.CHASE);
+            ghost.reverseDirectionIntention();  // This ensures ghosts reverse when switching modes
+        }
+    }
+
+    private void transitionToScatterMode() {
+        ghostState = GhostState.SCATTER;
+        for (Ghost ghost : ghosts) {
+            ghost.setGhostState(GhostState.SCATTER);
+            ghost.reverseDirectionIntention();  // This ensures ghosts reverse when switching modes
+        }
     }
 
     private void updatePacmanState() {
@@ -161,10 +212,31 @@ public class AbstractBoard implements Board {
     }
 
     private void triggerFrightenedMode() {
-        ghostPreviousState = ghostState;
-        ghostState = GhostState.FRIGHTENED;
-        frightTimer = frightTime[level - 1];
+        ghostPreviousState = ghostState;  // Save the current state to revert back to it after frightened mode ends
+        ghostState = GhostState.FRIGHTENED;  // Set all ghosts to frightened mode
+        frightTimer = frightTime[level - 1]*60;  // Set the timer based on the level
+
+        for (Ghost ghost : ghosts) {
+            ghost.setGhostState(GhostState.FRIGHTENED);
+
+        }
     }
+    private void decrementFrightTimer() {
+        if (ghostState == GhostState.FRIGHTENED) {
+            if (--frightTimer <= 0) {
+                endFrightenedMode();
+            }
+        }
+    }
+
+    private void endFrightenedMode() {
+        ghostState = ghostPreviousState;  // Revert to the previous state (either Scatter or Chase)
+        for (Ghost ghost : ghosts) {
+            ghost.setGhostState(ghostState);
+            // Optionally, make them reverse direction again if that is your game's mechanics
+        }
+    }
+
 
     private void checkLevelCompletion() {
         if (maze.getNumberOfDots() == 0) {
@@ -175,14 +247,13 @@ public class AbstractBoard implements Board {
     private void updateGhostsState() {
 
 
-
-            for (Ghost ghost : ghosts) {
-                if (ghostState != ghost.getGhostState() && !disable) {
-                    ghost.setGhostState(ghostState);
-                    ghost.reverseDirectionIntention();
-                }
-                updateGhost(ghost);
+        for (Ghost ghost : ghosts) {
+            if (ghostState != ghost.getGhostState() && !disable) {
+                ghost.setGhostState(ghostState);
+                ghost.reverseDirectionIntention();
             }
+            updateGhost(ghost);
+        }
 
     }
 
@@ -207,45 +278,6 @@ public class AbstractBoard implements Board {
         }
     }
 
-    private void updateGhostTimers() {
-        if (!disable && ghostState != GhostState.FRIGHTENED) {
-            updateModeTimers();
-        } else {
-            decrementFrightTimer();
-        }
-    }
-
-    private void updateModeTimers() {
-        if(!disable) {
-        if (ghostState == GhostState.SCATTER && decrementTimer(scatterTime, scatterCtr)) {
-            transitionToChaseMode();
-        } else if (ghostState == GhostState.CHASE && decrementTimer(chaseTime, chaseCtr)) {
-            maybeTransitionToScatterMode();
-        }}
-    }
-
-    private boolean decrementTimer(int[] times, int index) {
-        return --times[index] == 0;
-    }
-
-    private void transitionToChaseMode() {
-        ghostState = GhostState.CHASE;
-        scatterCtr++;
-    }
-
-    private void maybeTransitionToScatterMode() {
-        if (scatterCtr < 3) {
-            ghostState = GhostState.SCATTER;
-        }
-        chaseCtr++;
-    }
-
-    private void decrementFrightTimer() {
-        frightTimer--;
-        if (frightTimer == 0) {
-            ghostState = ghostPreviousState;
-        }
-    }
 
     //Step 2
 
@@ -292,16 +324,17 @@ public class AbstractBoard implements Board {
 
     @Override
     public void initializeNewLevel(int level) throws PacManException {
+        setBoardState(BoardState.INITIAL);
         this.level = level;
         this.scatterCtr = 0;
         switch (level) {
             case 2, 3, 4:
                 scatterTime = new int[]{7 * 60, 7 * 60, 5 * 60, 1};
-                chaseTime = new int[]{20 * 60, 20 * 60, 1033 * 60, -1};
+                chaseTime = new int[]{20 * 60, 20 * 60, 1033 * 60, Integer.MAX_VALUE};
                 break;
-            default:
+            case 5, 6:
                 scatterTime = new int[]{5 * 60, 5 * 60, 5 * 60, 1};
-                chaseTime = new int[]{20 * 60, 20 * 60, 1037 * 60, -1};
+                chaseTime = new int[]{20 * 60, 20 * 60, 1037 * 60, Integer.MAX_VALUE};
                 break;
         }
     }
@@ -313,10 +346,13 @@ public class AbstractBoard implements Board {
 
     @Override
     public void setNumberOfLives(int nbLives) {
+        pacman.setLifePoint(nbLives);
     }
 
     @Override
     public void initializeNewLife() {
+        setBoardState(BoardState.INITIAL);
+        setNumberOfLives(getNumberOfLives() - 1);
         pacman.initializePacMan();
         //initialize Ghosts
         ghosts.clear();
@@ -325,6 +361,9 @@ public class AbstractBoard implements Board {
         //Add last Pinky
         //Add last Inky
         //Add last Clyde
+        scatterTime = new int[]{7 * 60, 7 * 60, 5 * 60, 5 * 60};
+        chaseTime = new int[]{20 * 60, 20 * 60, 20 * 60, Integer.MAX_VALUE};
+
 
     }
 

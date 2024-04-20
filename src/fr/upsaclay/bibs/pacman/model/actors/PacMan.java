@@ -60,7 +60,7 @@ public class PacMan extends AbstractActor{
 
             // Check if PacMan is centered to determine movement or direction change
             if (isCentered()) {
-            System.out.println("PacMan is centered");
+//            System.out.println("PacMan is centered");
 
                 // Attempt to move in the intended direction when centered
                 if (tryThisWay()) {
@@ -89,7 +89,9 @@ public class PacMan extends AbstractActor{
     public int getLifePoint() {
         return lifePoint;
     }
-
+    public void setLifePoint(int lifePoint) {
+        this.lifePoint = lifePoint;
+    }
     public void initializePacMan(){
         if(getBoard().getGameType() == GameType.CLASSIC) {
             setPosition(112,211);

@@ -144,12 +144,12 @@ public class PacManGameView extends JFrame implements PacManView {
         score.setBackground(Color.BLACK);
         score.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel st = new JLabel("State : ");
-        st.setFont(new Font("Futura", Font.BOLD, 33));
-        st.setForeground(Color.WHITE);
-        st.setBackground(Color.BLACK);
-        st.setAlignmentX(Component.RIGHT_ALIGNMENT);
-        gameHeaderPanel.add(st);
+//        JLabel st = new JLabel("State : ");
+//        st.setFont(new Font("Futura", Font.BOLD, 33));
+//        st.setForeground(Color.WHITE);
+//        st.setBackground(Color.BLACK);
+//        st.setAlignmentX(Component.RIGHT_ALIGNMENT);
+//        gameHeaderPanel.add(st);
 
         //Timer
         timer.addActionListener(new ButtonListener(controller, GameAction.NEXT_FRAME));

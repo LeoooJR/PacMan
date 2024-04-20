@@ -32,6 +32,6 @@ public class ClassicBoard extends AbstractBoard{
     @Override
     public void initializeNewLevel(int level) throws PacManException {
         initialize();
-        super.initializeNewLevel(getLevel() + 1);
+        super.initializeNewLevel(level);
     }
 }
