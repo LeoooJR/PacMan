@@ -4,6 +4,7 @@ import fr.upsaclay.bibs.pacman.GameType;
 import fr.upsaclay.bibs.pacman.PacManException;
 import fr.upsaclay.bibs.pacman.model.Direction;
 import fr.upsaclay.bibs.pacman.model.actors.Actor;
+import fr.upsaclay.bibs.pacman.model.actors.PacMan;
 import fr.upsaclay.bibs.pacman.model.board.Board;
 import fr.upsaclay.bibs.pacman.model.maze.Maze;
 import fr.upsaclay.bibs.pacman.model.maze.Tile;
@@ -355,6 +356,9 @@ public class PacManTest {
         // we move 6 tiles up
         for(int i =0; i < Maze.TILE_HEIGHT * 6; i++) {
             pacman.nextMove();;
+//            System.out.println(pacman.getX() + " " + pacman.getY());
+            System.out.println(pacman.getCurrentTile());
+            System.out.println("Tile is "+maze.getTile(pacman.getCurrentTile()));
         }
         int x = pacman.getX();
         int y = pacman.getY();

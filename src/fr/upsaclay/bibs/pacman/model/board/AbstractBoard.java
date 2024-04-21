@@ -44,6 +44,10 @@ public class AbstractBoard implements Board {
 
     private int[] frightTime;
 
+    private int[] frightEndTimes;
+
+    private int frightEndTimer;
+
     private int frightTimer;
 
     private boolean disable;
@@ -74,6 +78,8 @@ public class AbstractBoard implements Board {
             scatterTime = new int[]{7 * 60, 7 * 60, 5 * 60, 5 * 60};
             chaseTime = new int[]{20 * 60, 20 * 60, 20 * 60, Integer.MAX_VALUE};
             frightTime = new int[]{6, 3, 4, 3, 2, 5, 2, 2, 1, 5, 2, 1, 1, 3, 1, 1, -1, 1, -1, -1, -1};
+
+            frightEndTimes = new int []{150, 150, 150, 150, 150, 150, 150, 150, 90, 150, 150, 90, 90, 150, 90, 90, -1, 90};
             //Load PacMan
             setPacman(new PacMan(this));
             setNumberOfLives(getNumberOfLives() - 1);
@@ -165,7 +171,12 @@ public class AbstractBoard implements Board {
                 }
             }
         }else{
-            decrementFrightTimer();
+            if (ghostState == GhostState.FRIGHTENED) {
+                decrementFrightTimer();
+            }else {
+                decrementFrightEndTimer();
+            }
+
         }
     }
 
@@ -173,7 +184,6 @@ public class AbstractBoard implements Board {
         ghostState = GhostState.CHASE;
         for (Ghost ghost : ghosts) {
             ghost.setGhostState(GhostState.CHASE);
-            ghost.reverseDirectionIntention();  // This ensures ghosts reverse when switching modes
         }
     }
 
@@ -181,7 +191,7 @@ public class AbstractBoard implements Board {
         ghostState = GhostState.SCATTER;
         for (Ghost ghost : ghosts) {
             ghost.setGhostState(GhostState.SCATTER);
-            ghost.reverseDirectionIntention();  // This ensures ghosts reverse when switching modes
+
         }
     }
 
@@ -212,9 +222,9 @@ public class AbstractBoard implements Board {
     }
 
     private void triggerFrightenedMode() {
-        ghostPreviousState = ghostState;  // Save the current state to revert back to it after frightened mode ends
-        ghostState = GhostState.FRIGHTENED;  // Set all ghosts to frightened mode
-        frightTimer = frightTime[level - 1]*60;  // Set the timer based on the level
+        ghostPreviousState = ghostState;
+        ghostState = GhostState.FRIGHTENED;
+        frightTimer = frightTime[level - 1]*60;
 
         for (Ghost ghost : ghosts) {
             ghost.setGhostState(GhostState.FRIGHTENED);
@@ -229,11 +239,35 @@ public class AbstractBoard implements Board {
         }
     }
 
+    private void decrementFrightEndTimer() {
+        if (ghostState == GhostState.FRIGHTENED_END) {
+            if (--frightEndTimer <= 0) {
+                endFrightenedEndMode();
+            }
+        }
+    }
+
     private void endFrightenedMode() {
-        ghostState = ghostPreviousState;  // Revert to the previous state (either Scatter or Chase)
+        triggerFrightenedEndMode();
         for (Ghost ghost : ghosts) {
             ghost.setGhostState(ghostState);
-            // Optionally, make them reverse direction again if that is your game's mechanics
+
+        }
+    }
+    private void endFrightenedEndMode() {
+        ghostState = ghostPreviousState;
+        for (Ghost ghost : ghosts) {
+            ghost.setGhostState(ghostState);
+        }
+    }
+    private void triggerFrightenedEndMode() {
+
+        ghostState = GhostState.FRIGHTENED_END;  // Set all ghosts to frightened mode
+        frightEndTimer = frightEndTimes[level - 1];  // Set the timer based on the level
+
+        for (Ghost ghost : ghosts) {
+            ghost.setGhostState(GhostState.FRIGHTENED_END);
+
         }
     }
 

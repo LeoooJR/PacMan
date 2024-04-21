@@ -46,6 +46,8 @@ public class PacMan extends AbstractActor{
     @Override
     public void nextMove(){
 //        System.out.println("PacMan Move initiated");
+        System.out.println("Intention : "+getIntention());
+        System.out.println("Direction : "+getDirection());
         // Check if there is an intention to reverse the direction
         if(getIntention() == getDirection().reverse()) {
 //            System.out.println("Intention is to reverse direction");
@@ -70,7 +72,10 @@ public class PacMan extends AbstractActor{
             } else {
 //            System.out.println("PacMan is not centered, continuing in the current direction");
             }
+
+
         }
+        tryThisWay();
 
 
     }
