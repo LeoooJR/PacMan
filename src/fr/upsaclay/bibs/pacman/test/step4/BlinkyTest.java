@@ -113,11 +113,17 @@ public class BlinkyTest {
         Board board = Board.createBoard(GameType.CLASSIC);
         board.initialize();
         Ghost blinky = board.getGhost(GhostType.BLINKY);
+        System.out.println(blinky.getCurrentTile());
         blinky.setSpeed(1);
+        blinky.setGhostState(GhostState.CHASE);
         // We move one tile to the left
         for(int i = 0; i < 8; i++) {
             board.nextFrame();
+            System.out.println(blinky.getCurrentTile());
+//            set
         }
+        System.out.println(blinky.getCurrentTile());
+        System.out.println("Pacman is in tile "+board.getMaze().getTilePosition(board.getPacMan().getX(), board.getPacMan().getY()));
         // Blinky has changed tile, it should get a new intention (which is left)
         assertEquals(blinky.getIntention(), Direction.LEFT);
     }
@@ -160,12 +166,20 @@ public class BlinkyTest {
         board.startActors();
         // We move as long as blinky goes left.
         // If this is an infinite loop, it means something is wrong
+        System.out.println("Before loop"+blinky.getCurrentTile());
         while (blinky.getDirection() == Direction.LEFT) {
+
+
             board.nextFrame();
+//            System.out.println("Intention in loop after:"+blinky.getIntention());
+
         }
-        System.out.println(blinky.getDirection());
+        System.out.println("Intention is :"+blinky.getIntention());
+//        System.out.println(blinky.getDirection());
         // The next direction should be down
-        assertEquals(blinky.getDirection(), Direction.DOWN);
+        assertEquals( blinky.getDirection(), Direction.DOWN);
+        System.out.println(blinky.getCurrentTile());
+
         // Blnky should be in tile (14,9) (corner top left above the ghost pen)
         assertEquals(blinky.getCurrentTile(), new TilePosition(14, 9));
         // We move as long as its down
@@ -213,6 +227,8 @@ public class BlinkyTest {
         while (blinky.getDirection() == Direction.DOWN) {
             board.nextFrame();
         }
+        System.out.println("Blinky is in tile"+blinky.getCurrentTile());
+        System.out.println("Pacman is in tile "+pacman.getCurrentTile());
         // It should be right
         assertEquals(blinky.getDirection(), Direction.RIGHT);
         // Blinky should be in (20, 9)

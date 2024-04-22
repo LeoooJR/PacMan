@@ -103,18 +103,18 @@ public class AbstractBoard implements Board {
         if (!disabledGhosts.contains(GhostType.BLINKY)) {
             ghosts.add(new Blinky(this));
         }
-        //Pinky
-        if (!disabledGhosts.contains(GhostType.PINKY)) {
-            ghosts.add(new Pinky(this));
-        }
-//            //Inky
-        if (!disabledGhosts.contains(GhostType.INKY)) {
-            ghosts.add(new Inky(this));
-        }
-//            //Clyde
-        if (!disabledGhosts.contains(GhostType.CLYDE)) {
-            ghosts.add(new Clyde(this));
-        }
+//        //Pinky
+//        if (!disabledGhosts.contains(GhostType.PINKY)) {
+//            ghosts.add(new Pinky(this));
+//        }
+////            //Inky
+//        if (!disabledGhosts.contains(GhostType.INKY)) {
+//            ghosts.add(new Inky(this));
+//        }
+////            //Clyde
+//        if (!disabledGhosts.contains(GhostType.CLYDE)) {
+//            ghosts.add(new Clyde(this));
+//        }
 
     }
 

@@ -7,6 +7,8 @@ import fr.upsaclay.bibs.pacman.model.maze.Maze;
 import fr.upsaclay.bibs.pacman.model.maze.Tile;
 import fr.upsaclay.bibs.pacman.model.maze.TilePosition;
 
+import java.util.Objects;
+
 public class AbstractActor implements Actor {
 
     private ActorType type;
@@ -101,7 +103,7 @@ public class AbstractActor implements Actor {
 
     return neighbourTile.isWall();
     }
-
+//Weird usage to note for ghosts
     public boolean isBlocked(TilePosition tile) {
         return board.getMaze().getNeighbourTile(tile, direction).isWall();
     }
@@ -158,8 +160,7 @@ public class AbstractActor implements Actor {
         } else if (newY < 0) {
             newY = board.getMaze().getPixelHeight() - 1;
         }
-//        System.out.println("New X : " + newX + " New Y : " + newY);
-//        System.out.println(STR."Tile is : \{board.getMaze().getTile(board.getMaze().getTilePosition((int)newX,( int)(newY)))}");
+
         setPosition(newX, newY);
     }
 

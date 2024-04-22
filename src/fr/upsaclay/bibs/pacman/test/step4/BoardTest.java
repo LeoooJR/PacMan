@@ -551,7 +551,7 @@ public void testStateTimes(Board board, int[] stateTimes) {
             for (Ghost ghost : board.getGhosts()) {
                 assertEquals(ghost.getGhostState(), GhostState.FRIGHTENED);
             }
-            if(i==3){
+            if(i==359){
                 GhostState st = initial;
             }
             board.nextFrame();

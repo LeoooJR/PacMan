@@ -42,8 +42,19 @@ public boolean isBlocked(TilePosition tile) {
     if (penState == GhostPenState.IN && getBoard().getMaze().getNeighbourTile(tile, getDirection()) == Tile.GD) {
         return false;
     }
-    return super.isBlocked(tile);
+//    Check if its wall
+    if (getBoard().getMaze().getTile(tile).isWall()) {
+        return true;
+    }
+    return false;
 }
+
+    public boolean tryThisWay(Direction dir, TilePosition tile) {
+        if (penState == GhostPenState.IN && getBoard().getMaze().getNeighbourTile(tile, dir) == Tile.GD) {
+            return true;
+        }
+        return !getBoard().getMaze().getTile(tile).isWall();
+    }
 
     public Direction computeDirection() {
         double minDistance = Double.MAX_VALUE;
@@ -57,6 +68,7 @@ public boolean isBlocked(TilePosition tile) {
 
         for (Direction dir : Direction.values()) {
             if (dir != currentDirection.reverse()) {
+                nextTile = getBoard().getMaze().getNeighbourTilePosition(currentTile, dir);
                 if (tryThisWay(dir, nextTile)) {
                     TilePosition neighbourTile = getBoard().getMaze().getNeighbourTilePosition(nextTile, dir);
                     double xDistance = neighbourTile.getCol() - getTarget().getCol();
@@ -74,41 +86,92 @@ public boolean isBlocked(TilePosition tile) {
     }
 
 
-    @Override
-    public void nextMove() {
-//        System.out.println("Blinky Move");
-        if (isCentered()) {
-//            System.out.println("Blinky est centré");
-            goThisWay(getIntention());
-            if (getGhostState() != GhostState.FRIGHTENED) {
-                setIntention(computeDirection());
-            } else {
-                int resRandom = (int) (Math.random() * (3 + 1));
-//                System.out.println("Resultat random : " + resRandom);
-                if (tryThisWay(Direction.values()[resRandom], getCurrentTile())) {
-                    setIntention(Direction.values()[resRandom]);
-                } else {
-                    boolean randWay = false;
-                    for (Direction direction : Direction.values()) {
-                        if (direction != Direction.values()[resRandom] && !randWay) {
-                            if (tryThisWay(direction, getCurrentTile())) {
-                                setIntention(direction);
-                                randWay = true;
-                            }
-                        }
+
+    public void ComputeIntentionBlinky(){
+        if (getGhostState() == GhostState.CHASE) {
+            // Set the target as PacMan's current tile
+            target = getBoard().getPacMan().getCurrentTile();
+
+            // Calculate the best direction to move towards PacMan
+            setIntention(computeDirectionTowardsTarget());
+        }
+    }
+
+    private Direction computeDirectionTowardsTarget() {
+        TilePosition currentTile = getCurrentTile();
+        double minDistance = Double.MAX_VALUE;
+        Direction selectedDirection = null;
+        Direction currentDirection = getDirection();
+
+        // Check all four directions for the shortest path to the target
+        for (Direction dir : Direction.values()) {
+            if (dir != currentDirection.reverse()) { // Prevent the ghost from reversing
+                TilePosition nextTile = getBoard().getMaze().getNeighbourTilePosition(currentTile, dir);
+                if (!isBlocked(nextTile)) {
+                    double xDistance = target.getCol() - nextTile.getCol();
+                    double yDistance = target.getLine() - nextTile.getLine();
+                    double distance = Math.sqrt(xDistance * xDistance + yDistance * yDistance);
+
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        selectedDirection = dir;
                     }
                 }
             }
-//            System.out.println("Blinky intention :" + getIntention());
+        }
+        return selectedDirection;
+    }
+
+    @Override
+    public void nextMove() {
+        if (isCentered()) {
+            System.out.println("Ghost is centered");
+            System.out.println(STR."Ghost is in  : \{getCurrentTile()}");
+            TilePosition currentTile = getCurrentTile();
+            if (getGhostState() == GhostState.FRIGHTENED || getGhostState() == GhostState.FRIGHTENED_END) {
+                setRandomIntention();
+            } else if (getGhostState() == GhostState.CHASE) {
+                ComputeIntentionBlinky(); // Update Blinky's intention based on the CHASE logic
+            } else {
+                setIntention(computeDirection());
+            }
+
+                goThisWay(getIntention());
+
+//            goThisWay(getIntention());
+
         }
         super.nextMove();
-        if (penState == GhostPenState.IN) {
-            if (getCurrentTile().getLine() <= 14 && getCurrentTile().getCol() >= 13) {
-                penState = GhostPenState.OUT;
-                ghostState = GhostState.SCATTER;
-            }
+        System.out.println("Intention : " + getIntention());
+        System.out.println("Direction : " + getDirection());
+
+
+        checkPenState();
+    }
+    private void checkPenState() {
+        if (penState == GhostPenState.IN && getCurrentTile().getLine() <= 14 && getCurrentTile().getCol() >= 13) {
+            penState = GhostPenState.OUT;
+            ghostState = GhostState.SCATTER;
         }
     }
+
+private void setRandomIntention() {
+    int resRandom = (int) (Math.random() * 4);
+    if (tryThisWay(Direction.values()[resRandom], getCurrentTile())) {
+        setIntention(Direction.values()[resRandom]);
+    } else {
+        setFirstValidDirection(resRandom);
+    }
+}
+
+private void setFirstValidDirection(int excludedDirection) {
+    for (Direction direction : Direction.values()) {
+        if (direction.ordinal() != excludedDirection && tryThisWay(direction, getCurrentTile())) {
+            setIntention(direction);
+            break;
+        }
+    }
+}
 
     //Step 3
 
