@@ -54,20 +54,14 @@ One of the primary challenges we faced was mentally visualizing the maze and the
 
 To effectively address this, our team developed a practical approach by creating physical layouts of both the test board configuration and the classic PacMan board. We used these layouts as references on paper, which significantly aided our debugging process. This hands-on method allowed us to trace and plan our functions more clearly, helping us better understand the underlying mechanics and the potential pitfalls of our algorithms.
 
-![Screenshot 2024-04-23 at 08.40.20.png](..%2F..%2F..%2F..%2F..%2F..%2F..%2Fvar%2Ffolders%2Fh5%2Fc0f_m8s50yx03wdbvzzcxjx40000gn%2FT%2FTemporaryItems%2FNSIRD_screencaptureui_LzhYIb%2FScreenshot%202024-04-23%20at%2008.40.20.png)
-![Screenshot 2024-04-23 at 08.38.50.png](..%2F..%2F..%2F..%2F..%2F..%2F..%2Fvar%2Ffolders%2Fh5%2Fc0f_m8s50yx03wdbvzzcxjx40000gn%2FT%2FTemporaryItems%2FNSIRD_screencaptureui_xoXAWc%2FScreenshot%202024-04-23%20at%2008.38.50.png)
+
 
 <p float="left">
-  <img src="../../../../../../var/folders/h5/c0f_m8s50yx03wdbvzzcxjx40000gn/T/TemporaryItems/NSIRD_screencaptureui_LzhYIb/Screenshot 2024-04-23 at 08.40.20.png" width="300" height="200" />
-  <img src="../../../../../../var/folders/h5/c0f_m8s50yx03wdbvzzcxjx40000gn/T/TemporaryItems/NSIRD_screencaptureui_xoXAWc/Screenshot 2024-04-23 at 08.38.50.png" width="300" height="200" />
+  <img src="resources/img/screenshot_2.png"  height="200" />
+  <img src="resources/img/screenshot_1.png"  height="200" />
 </p>
 
-<table style="width:100%; border: none">
-  <tr>
-    <td><img src="../../../../../../var/folders/h5/c0f_m8s50yx03wdbvzzcxjx40000gn/T/TemporaryItems/NSIRD_screencaptureui_LzhYIb/Screenshot 2024-04-23 at 08.40.20.png" width="300" height="200" /></td>
-    <td><img src="../../../../../../var/folders/h5/c0f_m8s50yx03wdbvzzcxjx40000gn/T/TemporaryItems/NSIRD_screencaptureui_xoXAWc/Screenshot 2024-04-23 at 08.38.50.png" width="300" height="200" /></td>
-  </tr>
-</table>
+
 
 ## Conclusion
 
