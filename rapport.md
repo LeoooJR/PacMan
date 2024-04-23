@@ -26,7 +26,7 @@ Additionally, while the basic framework for the user interface is in place, elem
 
 ### Class Structure and Hierarchy
 
-*Pending details on the specific classes and their relationships.*
+<img src="resources/img/flow.png"  height="300" />
 
 ## Tests
 
