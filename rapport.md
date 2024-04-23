@@ -1,47 +1,82 @@
-# Rapport pour le Projet PacMan
+# PacMan Project Report
 
-## Membres du groupe
+## Group Members
 
-*Ecrire vos noms*
+- Leo Jourdain
+- Jaffar Gura
+- Mapathe Faye
 
 ## Introduction
 
-*Décrivez les objetifs du projet*
+The primary goal of our PacMan project was to build a replica of the classic game, following specific guidelines provided by our professors. We chose Java as our programming language due to its robustness and object-oriented features, which are ideal for game development. For the graphical interface, we utilized Swing, a Java library that provides a set of lightweight components for building graphical user interfaces.
 
-## Réalisation
+A significant focus of our project was on replicating the Ghost AI to simulate the movements and hunting patterns seen in the original PacMan game. This challenge allowed us to delve into more complex programming concepts and AI strategies. Additionally, we dedicated considerable effort to creating an engaging and responsive user interface, enhancing the overall gameplay experience.
 
-### Avancement du projet
+## Implementation
 
-*Décrivez ce que vous avez implanté : quelles étapes, qu'est-ce qui fonctionne / ne fonctionne pas, etc*
+### Progress of the Project
 
-### Structure et hierarchie de classe
+Our team has successfully implemented several core aspects of the PacMan game. We have set up the game board and maze, implemented the movements for PacMan, and created the ghosts along with their targeting systems. Currently, the game features Scatter and Chase modes, which function relatively well. PacMan's movements are smooth, and the game board loads correctly, which are significant achievements in our project.
 
-*Décrivez les différentes classes implantées, qui implémente quoi, qui hérite de qui, etc*
+However, there are still areas that require further development. The Frightened mode for the ghosts is not yet complete, causing the movements of Pinky, Inky, and Clyde to sometimes appear erratic. This issue highlights a need for more precise algorithms to manage ghost behaviors across different game modes.
 
-*Si vous avez modifié la structure proposée (les classes / interfaces), expliquez le et justifiez vos choix*
+Additionally, while the basic framework for the user interface is in place, elements such as Pausing the Game, Game End, and Level Over functionalities are operational but unfinished. Our goal is to enhance these aspects to ensure a fully functional and visually appealing interface.
 
-### Tests
+### Class Structure and Hierarchy
 
-*Quels tests passent ? Ne passent pas ?*
+*Pending details on the specific classes and their relationships.*
 
-*Avez-vous modifié ou rajouté des tests ?*
+## Tests
 
-## Organisation du travail
+Our project's testing phase has seen varied success across different levels of complexity. The tests designed for Level 1 and Level 2 of our game are fully passing, which validates the fundamental mechanics of PacMan's movements and the basic ghost interactions. These initial tests have been crucial in establishing a stable foundation for further development.
 
-*Comment vous êtes-ous réparti le travail au sein du groupe ?*
+However, as we progressed to more complex scenarios in Level 3 and Level 4, the outcomes became mixed. While some tests in these levels are passing, others are not, indicating inconsistencies particularly in advanced game mechanics and ghost behaviors. We have not added any new tests but have extensively utilized debug statements and breakpoints to dissect and understand the failing tests. This approach has helped us identify specific issues but also highlighted areas where our game's logic can be complex and challenging to manage.
 
-*Comment avez-vous organisé le travail commun ?*
+## Work Organization
 
-## Prise de recul
+### Division of Labor
 
-### Quels progrès ?
+*Pending details on the specific roles and tasks assigned to each group member.*
 
-*Décrivez là où vous pensez avoir progressé pendant ce projet*
+### Team Coordination
 
-### Quelles difficultés ?
+Our team utilized GitHub for version control, a tool with which we were already familiar. This choice allowed us to effectively manage our project's codebase, track changes, and collaborate seamlessly. GitHub's features enabled us to review each other's contributions, merge code without conflicts, and maintain a consistent development workflow throughout the project.
 
-*Quelles difficultés principales avez-vous rencontrées ? Comment les avez-vous dépassées ou contournées ?*
+## Reflection
+
+### Progress
+
+*Pending reflection on progress made.*
+
+### Challenges
+
+One of the primary challenges we faced was mentally visualizing the maze and the movements within it, particularly when debugging the code. This issue became pronounced as we tried to understand and optimize the movement and targeting functions of both PacMan and the ghosts.
+
+To effectively address this, our team developed a practical approach by creating physical layouts of both the test board configuration and the classic PacMan board. We used these layouts as references on paper, which significantly aided our debugging process. This hands-on method allowed us to trace and plan our functions more clearly, helping us better understand the underlying mechanics and the potential pitfalls of our algorithms.
+
+![Screenshot 2024-04-23 at 08.40.20.png](..%2F..%2F..%2F..%2F..%2F..%2F..%2Fvar%2Ffolders%2Fh5%2Fc0f_m8s50yx03wdbvzzcxjx40000gn%2FT%2FTemporaryItems%2FNSIRD_screencaptureui_LzhYIb%2FScreenshot%202024-04-23%20at%2008.40.20.png)
+![Screenshot 2024-04-23 at 08.38.50.png](..%2F..%2F..%2F..%2F..%2F..%2F..%2Fvar%2Ffolders%2Fh5%2Fc0f_m8s50yx03wdbvzzcxjx40000gn%2FT%2FTemporaryItems%2FNSIRD_screencaptureui_xoXAWc%2FScreenshot%202024-04-23%20at%2008.38.50.png)
+
+<p float="left">
+  <img src="../../../../../../var/folders/h5/c0f_m8s50yx03wdbvzzcxjx40000gn/T/TemporaryItems/NSIRD_screencaptureui_LzhYIb/Screenshot 2024-04-23 at 08.40.20.png" width="300" height="200" />
+  <img src="../../../../../../var/folders/h5/c0f_m8s50yx03wdbvzzcxjx40000gn/T/TemporaryItems/NSIRD_screencaptureui_xoXAWc/Screenshot 2024-04-23 at 08.38.50.png" width="300" height="200" />
+</p>
+
+<table style="width:100%; border: none">
+  <tr>
+    <td><img src="../../../../../../var/folders/h5/c0f_m8s50yx03wdbvzzcxjx40000gn/T/TemporaryItems/NSIRD_screencaptureui_LzhYIb/Screenshot 2024-04-23 at 08.40.20.png" width="300" height="200" /></td>
+    <td><img src="../../../../../../var/folders/h5/c0f_m8s50yx03wdbvzzcxjx40000gn/T/TemporaryItems/NSIRD_screencaptureui_xoXAWc/Screenshot 2024-04-23 at 08.38.50.png" width="300" height="200" /></td>
+  </tr>
+</table>
 
 ## Conclusion
 
-*Etes vous satisfaits ? Que feriez vous si vous deviez continuer ? Qu'est-ce que le projet vous a apporté ?*
+Overall, our team has greatly enjoyed working on the PacMan project. While we are proud of what we have achieved, given more time and fewer competing commitments, we believe we could have produced an even more complete and functional game. Nonetheless, we plan to continue working on the project after its official conclusion to achieve a sense of accomplishment from fully building our own game.
+
+Throughout this project, we have gained invaluable skills in adapting and debugging code. The use of breakpoints, print statements, and conditional breakpoints has taught us new ways to step through our code effectively. This practical experience has been crucial in enhancing our debugging techniques.
+
+Collaboratively, we learned significant lessons about teamwork and project management, particularly in the context of a complex software development project. Additionally, our efforts to render game layouts have improved, though we acknowledge that there is still much to learn in this area.
+
+Looking forward, our immediate goal is to complete the project by refining the game's structure. We aim to separate concerns more clearly, moving specific methods from individual actor classes to the appropriate abstract classes. This restructuring will streamline our codebase, reduce repetition, and enhance the maintainability of our game.
+
+This project has not only provided us with a deeper understanding of software development and game design but has also strengthened our capabilities to work effectively as a team.
