@@ -1,5 +1,7 @@
 # PacMan Project Report
 
+![video-ezgif.com-optimize.gif](resources%2Fimg%2Fvideo-ezgif.com-optimize.gif)
+
 ## Group Members
 
 - Leo Jourdain
@@ -36,7 +38,8 @@ However, as we progressed to more complex scenarios in Level 3 and Level 4, the 
 
 ### Division of Labor
 
-*Pending details on the specific roles and tasks assigned to each group member.*
+Léo took charge of many of the game's key technical aspects, including the implementation of the maze and the game board. He also worked on the movement mechanics for PacMan and the ghosts, as well as managing the game controller, ensuring fluid interaction for users. Jaffar doubled up on implementing the game board with Leo, also focusing on PacMan and ghost movement. His role extended to the graphic aspect of the game, where he set up the visual interface, and he also took part in controller management, ensuring consistency between the interface and the control mechanisms. Mapathé played a key role in the implementation of the labyrinth and collaborated on the development of the game board. It also made a significant contribution to the graphics, ensuring that the game's aesthetic was attractive and engaging for players. Each member brought complementary skills that enriched the project.
+
 
 ### Team Coordination
 
@@ -53,8 +56,6 @@ Our team utilized GitHub for version control, a tool with which we were already 
 One of the primary challenges we faced was mentally visualizing the maze and the movements within it, particularly when debugging the code. This issue became pronounced as we tried to understand and optimize the movement and targeting functions of both PacMan and the ghosts.
 
 To effectively address this, our team developed a practical approach by creating physical layouts of both the test board configuration and the classic PacMan board. We used these layouts as references on paper, which significantly aided our debugging process. This hands-on method allowed us to trace and plan our functions more clearly, helping us better understand the underlying mechanics and the potential pitfalls of our algorithms.
-
-
 
 <p float="left">
   <img src="resources/img/screenshot_2.png"  height="200" />

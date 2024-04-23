@@ -178,12 +178,5 @@ public Tile getNeighbourTile(TilePosition pos, Direction dir) {
         return numberOfDots;
     }
 
-    public static void main(String[] args) throws FileNotFoundException {
-        Maze test = Maze.emptyMaze(10,15);
-        List<Color> colors = new ArrayList<>();
-        colors.add(Color.BLACK); colors.addLast(Color.BLUE); colors.addLast(Color.pink);
-        Color[][] test2 = Maze.loadFromFile("/Users/leojourdain/Documents/Java/Projet/Projet_Pacman/resources/tiles/BD.txt",colors);
-//        System.out.println(Arrays.deepToString(test2));
 
-    }
 }
